@@ -1,31 +1,26 @@
 //require the correct node modules
-// var express = require('express');
-// var app = express();
-// var session = require('express-session');
-// var sqlite3 = require('sqlite3').verbose();
-// var db = new sqlite3.Database('bestMovies.db');
-// var bcrypt = require('bcrypt');
-// var fs = require('fs');
-// var bodyParser=require('body-parser');
-// var request = require('request');
-// var ejs = require('ejs');
-// var path = require('path');
-
 var express = require('express');
 var app = express();
-var request = require('request');
-var ejs = require('ejs');
-var bodyParser = require('body-parser');
-var fs = require('fs');
 var session = require('express-session');
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('authentication.db');
-var bcrypt = require ('bcrypt');
+var db = new sqlite3.Database('bestMovies.db');
+var bcrypt = require('bcrypt');
+var fs = require('fs');
+var bodyParser=require('body-parser');
+var request = require('request');
+var ejs = require('ejs');
+var path = require('path');
 
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use(session({
+  secret: "string",
+  resave: false,
+  saveUninitialized: true
+}));
 
 app.get('/', function(req,res){
 	res.render('login.ejs', {});
@@ -33,7 +28,7 @@ app.get('/', function(req,res){
 
 
 app.post('/user', function(req,res){
-	var username = req.body.newName.to_s;
+	var username = req.body.newName;
 	var password = req.body.newPassword;
 	console.log(username);
 	console.log(password);
@@ -77,7 +72,7 @@ app.post('/session', function(req,res){
 
 app.get('/movies', function(req,res){
 	if (req.session.valid_user === true){
-		res.send('index.ejs', {});
+		res.render('index.ejs', {});
 	} else {
 		res.redirect('/');
 	} 
