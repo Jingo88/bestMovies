@@ -1,15 +1,26 @@
 //require the correct node modules
+// var express = require('express');
+// var app = express();
+// var session = require('express-session');
+// var sqlite3 = require('sqlite3').verbose();
+// var db = new sqlite3.Database('bestMovies.db');
+// var bcrypt = require('bcrypt');
+// var fs = require('fs');
+// var bodyParser=require('body-parser');
+// var request = require('request');
+// var ejs = require('ejs');
+// var path = require('path');
+
 var express = require('express');
 var app = express();
-var session = require('express-session');
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('bestMovies.db');
-var bcrypt = require('bcrypt');
-var fs = require('fs');
-var bodyParser=require('body-parser');
 var request = require('request');
 var ejs = require('ejs');
-var path = require('path');
+var bodyParser = require('body-parser');
+var fs = require('fs');
+var session = require('express-session');
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database('authentication.db');
+var bcrypt = require ('bcrypt');
 
 
 app.use(express.static('public'));
@@ -22,7 +33,7 @@ app.get('/', function(req,res){
 
 
 app.post('/user', function(req,res){
-	var username = req.body.newName;
+	var username = req.body.newName.to_s;
 	var password = req.body.newPassword;
 	console.log(username);
 	console.log(password);
@@ -48,7 +59,7 @@ app.post('/session', function(req,res){
 	console.log("you are now in session post");
 
 	db.get('SELECT * FROM users WHERE username = ?', username, function(err, row){
-		if(err) {throw err;}
+		if(err) {throw err;};
 		
 		if(row) {
 			var passwordMatches = bcrypt.compareSync(password, row.password);
