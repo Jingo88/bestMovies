@@ -14,6 +14,7 @@ homenav.addEventListener('click', function(){
     xhr.send();
 });
 
+//search using find button
 titleButton.addEventListener('click', function(){
     var movie = findTitle.value;
     if (movie != ''){
@@ -23,6 +24,7 @@ titleButton.addEventListener('click', function(){
     }
 });
 
+//search using enter key
 findTitle.addEventListener('keyup', function(e){
     if (e.keyCode === 13){
         var movie = findTitle.value;
@@ -62,9 +64,9 @@ function searchTitle(movie){
 };
 
 
-multiMovie.addEventListener('click', function(){
-    console.log(this);
-});
+// multiMovie.addEventListener('click', function(){
+//     console.log(this);
+// });
 
 // var myFunction = function() {
 //     var attribute = this.getAttribute("data-myattribute");
