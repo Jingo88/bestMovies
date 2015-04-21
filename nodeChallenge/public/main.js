@@ -12,7 +12,6 @@ function searchTitle(movie){
         if (movies.length >= 2){
             for (i=0; i<movies.length; i++){
                 var li=document.createElement('li');
-                // li.innerHTML = "<a href=''>" + movies[i].Title + "</a>";
                 li.innerHTML = movies[i].Title;
                 li.setAttribute('class', 'multiMovie');
                 page.appendChild(li);
@@ -72,8 +71,6 @@ function singleMovie(movie){
         writers.appendChild(writHead);
         genre.appendChild(genreHead);
 
-
-
         //bringing in the list of movie stuff
         var title = document.createElement('h3');
         title.innerText = parsed.Title;
@@ -116,10 +113,10 @@ function singleMovie(movie){
             genre.appendChild(li);
         };
 
-        var button = document.createElement('button');
         button.setAttribute('id', 'favSave');
         button.innerText = "Save to Favorites!";
 
+        currentMovie = parsed.Title;
 
         page.appendChild(title);
         page.appendChild(poster);
@@ -128,7 +125,26 @@ function singleMovie(movie){
         page.appendChild(writers);
         page.appendChild(genre);
         page.appendChild(button);
-    })
+    });
     xhr.send();
-}
+};
 
+button.addEventListener('click', function(){
+    console.log("The Current Movie is " + currentMovie);
+    var url = '/movies/favAdd/' + currentMovie;
+    console.log("The url for adding in main.js is " + url );
+
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+
+//alert this movie has been added to your favorites list
+
+    xhr.addEventListener('load', function(){
+        var d = xhr.responseText;
+        var parsed = JSON.parse(d);
+        console.log(parsed);
+        console.log("We are now attempting to add to the favorites table");
+    });
+    xhr.send();
+});

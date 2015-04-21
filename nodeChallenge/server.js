@@ -65,6 +65,7 @@ app.post('/session', function(req,res){
 			console.log(passwordMatches)
 			if (passwordMatches) { 
 				req.session.valid_user = true;
+				req.session.username = username;
 				res.redirect('/movies');	
 			}
 
@@ -92,17 +93,16 @@ app.get('/movies', function(req,res){
 app.get('/movies/:title', function(req, res){
   var title = req.params.title;
 
-  // var urlRT = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=" + rtapi + "&q=" + title;
 
-  var urlRT = "http://www.omdbapi.com/?s=" + title
+  var omdburl = "http://www.omdbapi.com/?s=" + title;
 
-  request(urlRT, function(error, response, body){
+  request(omdburl, function(error, response, body){
     if (!error && response.statusCode == 200){
       res.send(body);
       console.log(body);
     }
   })
-  console.log(urlRT);
+  console.log(omdburl);
 });
 
 
@@ -132,9 +132,56 @@ app.post('/movies/single/:title', function(req, res){
   		})
   	}
   });
-  console.log(omdburl);
-})
+  console.log("This is the omdb url" + omdburl);
+});
 
+
+//have to encapsulate all the db calls within one another because they run asynchronously
+//This causes issues when db.get the user or movie id comes in after the delete or insert events run
+app.post('/movies/favAdd/:title', function(req,res){
+	var username = req.session.username;
+	var title = req.params.title;
+	var user_id = '';
+	var movie_id = '';
+	console.log("we are in the favorite add post")
+
+	db.get("SELECT * FROM users WHERE username = ?", username,function(err, row){
+		if(err) {throw err;};
+		console.log("This is db.get in adding to favorites username")
+
+		if (row != undefined){	
+			user_id = row.id;
+			console.log("This is the favorites username logging the user_id and row_id " + user_id);
+		}
+
+		db.get("SELECT * FROM movies WHERE title = ?", title,function(err, row){
+			if(err) {throw err;};
+
+			if (row != undefined){
+				movie_id = row.id;
+			}
+
+
+			db.run("DELETE FROM favorites WHERE user_id = ? AND movie_id = ?", user_id, movie_id, function(err){
+				if(err){ console.log("THIS IS AN ERROR")}
+		
+
+				//need to add an if statement to make sure this type of relationship hasn't already been created
+				db.run("INSERT INTO favorites(user_id, movie_id) VALUES (?, ?)", user_id, movie_id, function(err){
+
+					console.log("your user_id being added is " + user_id);
+					console.log("your movie_id being added is " + movie_id);
+					if(err) {throw err;}
+					var id = this.lastID;
+					db.get("SELECT * FROM favorites WHERE id = ?", id, function(err, row){
+						if(err) {throw err;} 
+							res.json(row);
+					});
+				})
+			});
+		})
+	})
+});
 
 
 //tells you if you are connected, shows up in terminal

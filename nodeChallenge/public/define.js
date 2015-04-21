@@ -5,10 +5,15 @@ var titleButton = document.querySelector('#titleButton');
 var multiMovie = document.querySelector('#movieList');
 var page = document.querySelector('#page');
 var home = document.querySelector('#home');
+var button = document.createElement('button');
+
+//use this to store the title of the current SINGLE movie the user is viewing
+var currentMovie = '';
 
 function clearData(){
     page.innerHTML = '';
     findTitle.value = '';
+    currentMovie = '';
 }
 
 homenav.addEventListener('click', function(){
@@ -28,7 +33,7 @@ findTitle.addEventListener('keyup', function(e){
             searchTitle(movie);
         } else {
             alert('Please enter a movie title');
-        }   
+        };   
     }
 });
 
