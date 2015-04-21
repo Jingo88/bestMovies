@@ -2,7 +2,9 @@ var homenav = document.querySelector('#home');
 var findTitle = document.querySelector('#findTitle');
 var titleButton = document.querySelector('#titleButton');
 var movieList = document.querySelector('#movieList');
-var bang = document.getElementsByClassName('.multiMovie');
+var movieDets = document.querySelector('#movieDets');
+var multiMovie = document.querySelector('#movieList');
+
 
 homenav.addEventListener('click', function(){
     var url = "/"
@@ -33,19 +35,78 @@ function searchTitle(movie){
         if (movieObj.total >= 2){
             for (i=0; i<movieObj.total; i++){
                 var li=document.createElement('li');
-                li.innerHTML = "<a href=''>" + movieObj.movies[i].title + "</a>";
-                li.setAttribute('class', 'multiMovie')
+                // li.innerHTML = "<a href=''>" + movieObj.movies[i].title + "</a>";
+                li.innerHTML = movieObj.movies[i].title;
+                li.setAttribute('class', 'multiMovie');
                 movieList.appendChild(li);
             };
-        } 
+        } else {
+                    var d = xhr.responseText;
+        var parsed = JSON.parse(d);
+        var cast = document.createElement('ul');
+        var directors = document.createElement('ul');
+        var writers = document.createElement('ul');
+        var genre = document.createElement('ul');
+
+        //bringing in the list of movie stuff
+        var castName = parsed.Actors.split(',');
+        var directorName = parsed.Director.split(',');
+        var writerName = parsed.Writer.split(',');
+        var genreType = parsed.Genre.split(',');
+
+        for (i=0; i<castName.length; i++){
+            var li = document.createElement("li");
+            li.innerText = castName[i];
+            cast.appendChild(li);
+        };
+
+        for (i=0; i<directorName.length; i++){
+            var li = document.createElement("li");
+            li.innerText = directorName[i];
+            directors.appendChild(li);
+        };
+
+        for (i=0; i<writerName.length; i++){
+            var li = document.createElement("li");
+            li.innerText = writerName[i];
+            writers.appendChild(li);
+        };
+
+        for (i=0; i<genreType.length; i++){
+            var li = document.createElement("li");
+            li.innerText = genreType[i];
+            genre.appendChild(li);
+        };
+
+        // cover.innerHTML = "<img src='" + parsedPoster + "'>"
+        title.innerText = parsed.Title;
+
+
+        movieDets.appendChild(title);
+        movieDets.appendChild(cast);
+        movieDets.appendChild(directors);
+        movieDets.appendChild(writers);
+        movieInfo.appendChild(genre);
+        console.log(parsed);
+        }
+
     });
     xhr.send();
 };
 
-bang.addEventListener('click', function(){
+
+multiMovie.addEventListener('click', function(){
     console.log(this);
 });
 
+// var myFunction = function() {
+//     var attribute = this.getAttribute("data-myattribute");
+//     console.log(this);
+// };
+
+// for(var i=0;i<multiMovie.length;i++){
+//     multiMovie[i].addEventListener('click', myFunction, false);
+// }
 
 
 // function allBills(bioID) {
