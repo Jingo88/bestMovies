@@ -82,11 +82,10 @@ app.get('/movies', function(req,res){
 	} 
 });
 
-//searches for the movie title
+//searches through movie titles on the Rotten Tomatoes API.
+//Using RT because OMDB does not allow easy cycling through movies with the same title
 app.get('/movies/:title', function(req, res){
   var title = req.params.title;
-
-  // var omdburl = "http://www.omdbapi.com/?t=" + title;
 
   var urlRT = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=" + "tutuzpx6jygc5wretb22bqnj" + "&q=" + title;
 
@@ -99,17 +98,9 @@ app.get('/movies/:title', function(req, res){
 });
 
 
-
+//This gets the info from OMDB because they have more movie details
 app.post('/movies/single/:title', function(req, res){
   var title = req.params.title;
-
-  db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
-  	if (err){
-  		db.run("INSERT INTO movies(title) VALUES (?)", title, function(err){
-  			if(err){throw err;};
-  		})
-  	}
-  })
 
   var omdburl = "http://www.omdbapi.com/?t=" + title;
 
@@ -118,9 +109,33 @@ app.post('/movies/single/:title', function(req, res){
       res.send(body);
     }
   })
+
+  db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
+  	if(err) {throw err;};
+
+  	if (row===undefined){
+  		db.run("INSERT INTO movies(title) VALUES (?)", title, function(err){
+  			if(err){throw err;};
+  			
+  		})
+  	}
+  });
   console.log(omdburl);
 })
 
+
+
+// app.post('/movies/single/:title', function(req, res){
+// 	db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
+  	
+//   	if (err){
+//   		db.run("INSERT INTO movies(title) VALUES (?)", title, function(err){
+//   			if(err){throw err;};
+//   		})
+//   	}
+//   });
+
+// })
 
 
 // app.post('/user', function(req,res){
