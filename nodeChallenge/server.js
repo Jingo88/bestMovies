@@ -96,7 +96,51 @@ app.get('/movies/:title', function(req, res){
     }
   })
   console.log(urlRT);
+});
+
+
+
+app.post('/movies/single/:title', function(req, res){
+  var title = req.params.title;
+
+  db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
+  	if (err){
+  		db.run("INSERT INTO movies(title) VALUES (?)", title, function(err){
+  			if(err){throw err;};
+  		})
+  	}
+  })
+
+  var omdburl = "http://www.omdbapi.com/?t=" + title;
+
+  request(omdburl, function(error, response, body){
+    if (!error && response.statusCode == 200){
+      res.send(body);
+    }
+  })
+  console.log(omdburl);
 })
+
+
+
+// app.post('/user', function(req,res){
+// 	var username = req.body.newName;
+// 	var password = req.body.newPassword;
+// 	console.log(username);
+// 	console.log(password);
+
+// 	if (req.body.newPassword === req.body.confirmPass){
+// 		var hash = bcrypt.hashSync(password, 8);
+// 		// Now the password is the hash you have created
+// 		db.run('INSERT INTO users(username, password) VALUES (?, ?)', username, hash, function(err){
+// 			if(err) { throw err;}
+
+// 		});
+// 		res.redirect('/');
+// 	} else {
+// 		res.redirect('/');
+// 	}
+// });
 
 //tells you if you are connected, shows up in terminal
 app.listen(3000);

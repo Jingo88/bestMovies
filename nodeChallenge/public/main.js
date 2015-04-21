@@ -30,25 +30,83 @@ function searchTitle(movie){
 
     xhr.addEventListener('load', function(){
         var movieObj = JSON.parse(xhr.responseText);
+        var movies = movieObj.movies;
         console.log(movieObj);
 
-        if (movieObj.total >= 2){
-            for (i=0; i<movieObj.total; i++){
+        if (movies.length >= 2){
+            for (i=0; i<movies.length; i++){
                 var li=document.createElement('li');
                 // li.innerHTML = "<a href=''>" + movieObj.movies[i].title + "</a>";
-                li.innerHTML = movieObj.movies[i].title;
+                li.innerHTML = movies[i].title;
                 li.setAttribute('class', 'multiMovie');
                 movieList.appendChild(li);
             };
         } else {
-                    var d = xhr.responseText;
+            singleMovie(movie);
+        }
+
+    });
+    xhr.send();
+};
+
+
+multiMovie.addEventListener('click', function(){
+    console.log(this);
+});
+
+// var myFunction = function() {
+//     var attribute = this.getAttribute("data-myattribute");
+//     console.log(this);
+// };
+
+// for(var i=0;i<multiMovie.length;i++){
+//     multiMovie[i].addEventListener('click', myFunction, false);
+// }
+
+function singleMovie(movie){
+    
+    var url = "movies/single/" + movie;
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("GET", url);
+
+    xhr.addEventListener('load', function(e) {
+
+        var d = xhr.responseText;
         var parsed = JSON.parse(d);
+        console.log(parsed);
+
+
+        //create the categories and their headers
         var cast = document.createElement('ul');
         var directors = document.createElement('ul');
         var writers = document.createElement('ul');
         var genre = document.createElement('ul');
 
+        var castHead = document.createElement('h3');
+        var dirHead = document.createElement('h3');
+        var writHead = document.createElement('h3');
+        var genreHead = document.createElement('h3');
+
+        castHead.innerHTML = "Cast";
+        dirHead.innerHTML = "Directors";
+        writHead.innerHTML = "Writers";
+        genreHead.innerHTML = "Genre";
+
+        cast.appendChild(castHead);
+        directors.appendChild(dirHead);
+        writers.appendChild(writHead);
+        genre.appendChild(genreHead);
+
+
+
         //bringing in the list of movie stuff
+        var title = document.createElement('h3');
+        title.innerText = parsed.Title;
+
+        var poster = document.createElement('div');
+        poster.innerHTML = "<img src='" + parsed.Poster + "'>"
+
         var castName = parsed.Actors.split(',');
         var directorName = parsed.Director.split(',');
         var writerName = parsed.Writer.split(',');
@@ -78,35 +136,17 @@ function searchTitle(movie){
             genre.appendChild(li);
         };
 
-        // cover.innerHTML = "<img src='" + parsedPoster + "'>"
-        title.innerText = parsed.Title;
 
 
         movieDets.appendChild(title);
+        movieDets.appendChild(poster);
         movieDets.appendChild(cast);
         movieDets.appendChild(directors);
         movieDets.appendChild(writers);
-        movieInfo.appendChild(genre);
-        console.log(parsed);
-        }
-
-    });
+        movieDets.appendChild(genre);
+    })
     xhr.send();
-};
-
-
-multiMovie.addEventListener('click', function(){
-    console.log(this);
-});
-
-// var myFunction = function() {
-//     var attribute = this.getAttribute("data-myattribute");
-//     console.log(this);
-// };
-
-// for(var i=0;i<multiMovie.length;i++){
-//     multiMovie[i].addEventListener('click', myFunction, false);
-// }
+}
 
 
 // function allBills(bioID) {
