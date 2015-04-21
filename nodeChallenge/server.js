@@ -184,6 +184,19 @@ app.post('/movies/favAdd/:title', function(req,res){
 });
 
 
+
+app.get('/favList/', function(req, res){
+	var user_id = 1;
+	var movieArr = [];
+
+	console.log("We are in the favorite list server call");
+
+	db.get("SELECT * FROM favorites WHERE user_id = ?", user_id, function(err, rows){
+		if(err) {throw err;};
+		res.json(rows);
+	})
+});
+
 //tells you if you are connected, shows up in terminal
 app.listen(3000);
 console.log("we are connected to port 3000");

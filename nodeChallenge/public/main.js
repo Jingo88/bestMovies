@@ -129,6 +129,7 @@ function singleMovie(movie){
     xhr.send();
 };
 
+//This event Listener will add to the favorites list
 button.addEventListener('click', function(){
     console.log("The Current Movie is " + currentMovie);
     var url = '/movies/favAdd/' + currentMovie;
@@ -138,8 +139,6 @@ button.addEventListener('click', function(){
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url);
 
-//alert this movie has been added to your favorites list
-
     xhr.addEventListener('load', function(){
         var d = xhr.responseText;
         var parsed = JSON.parse(d);
@@ -148,3 +147,21 @@ button.addEventListener('click', function(){
     });
     xhr.send();
 });
+
+//This event listener will show the favorites list
+//you can add the class loop from earlier and then call the single movie function when needed
+userFav.addEventListener('click', function(){
+
+    var url = '/favList/';
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+
+    xhr.addEventListener('load', function(){
+        var d = xhr.responseText;
+        var parsed = JSON.parse(d);
+        console.log(parsed);
+        console.log("We are now attempting attempting to get the favorites list");
+    });
+    xhr.send();
+})

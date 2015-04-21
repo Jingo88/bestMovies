@@ -6,6 +6,7 @@ var multiMovie = document.querySelector('#movieList');
 var page = document.querySelector('#page');
 var home = document.querySelector('#home');
 var button = document.createElement('button');
+var userFav = document.querySelector('#favLink');
 
 //use this to store the title of the current SINGLE movie the user is viewing
 var currentMovie = '';
