@@ -186,14 +186,41 @@ app.post('/movies/favAdd/:title', function(req,res){
 
 
 app.get('/favList/', function(req, res){
-	var user_id = 1;
+	var username = req.session.username;
+	var user_id = '';
 	var movieArr = [];
+	var movieTitles = [];
 
 	console.log("We are in the favorite list server call");
 
-	db.get("SELECT * FROM favorites WHERE user_id = ?", user_id, function(err, rows){
+	db.get("SELECT * FROM users WHERE username = ?", username, function(err, row){
 		if(err) {throw err;};
-		res.json(rows);
+
+		if(row != undefined){
+			user_id = row.id;
+		}
+		db.all("SELECT * FROM favorites WHERE user_id = ?", user_id, function(err, rows){
+			if(err) {throw err;};
+			//only returning the first row and nothing else!
+
+			for (i=0; i<rows.length; i++){
+				movieArr.push(rows[i].movie_id);
+				console.log(movieArr);
+			}
+
+			
+			for (j=0; j<movieArr.length; j++){
+				db.get("SELECT * FROM movies WHERE id = ?", movieArr[j], function(err, row){
+					if(err) {throw err;};
+					console.log("This is your row going in the movieArr " + row.title);
+					movieTitles.push(row.title);
+
+					if(movieTitles.length === movieArr.length){
+						res.send(movieTitles);
+					}
+				})
+			};
+		})
 	})
 });
 
