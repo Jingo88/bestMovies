@@ -1,6 +1,0 @@
-//Put my movies in here. When the top page is clicked you can link it to my arrays
-//You can also make this a object and have the user's name in here and the array of their favorites
-
-var movies = {
-	"Jason": ["The Usual Suspects", "12 Angry Men", "Butch Cassidy and the Sundance Kid", "The Raid", "Se7en"]
-}

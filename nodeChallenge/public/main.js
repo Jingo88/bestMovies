@@ -1,42 +1,3 @@
-var homenav = document.querySelector('#home');
-var findTitle = document.querySelector('#findTitle');
-var titleButton = document.querySelector('#titleButton');
-var movieList = document.querySelector('#movieList');
-var movieDets = document.querySelector('#movieDets');
-var multiMovie = document.querySelector('#movieList');
-
-
-homenav.addEventListener('click', function(){
-    var url = "/"
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-
-    xhr.send();
-});
-
-//search using find button
-titleButton.addEventListener('click', function(){
-    var movie = findTitle.value;
-    if (movie != ''){
-        searchTitle(movie);
-    } else {
-        alert('Please enter a movie title');
-    }
-});
-
-//search using enter key
-findTitle.addEventListener('keyup', function(e){
-    if (e.keyCode === 13){
-        var movie = findTitle.value;
-
-        if (movie != ''){
-            searchTitle(movie);
-        } else {
-            alert('Please enter a movie title');
-        }   
-    }
-});
-
 function searchTitle(movie){
     var url = '/movies/' + movie
     var xhr = new XMLHttpRequest();
@@ -44,16 +5,17 @@ function searchTitle(movie){
 
     xhr.addEventListener('load', function(){
         var movieObj = JSON.parse(xhr.responseText);
-        var movies = movieObj.movies;
+        var movies = movieObj.Search;
         console.log(movieObj);
 
+        clearData();
         if (movies.length >= 2){
             for (i=0; i<movies.length; i++){
                 var li=document.createElement('li');
-                // li.innerHTML = "<a href=''>" + movieObj.movies[i].title + "</a>";
-                li.innerHTML = movies[i].title;
+                li.innerHTML = "<a href=''>" + movies[i].Title + "</a>";
+                // li.innerHTML = movies[i].Title;
                 li.setAttribute('class', 'multiMovie');
-                movieList.appendChild(li);
+                page.appendChild(li);
             };
         } else {
             singleMovie(movie);
@@ -119,7 +81,13 @@ function singleMovie(movie){
         title.innerText = parsed.Title;
 
         var poster = document.createElement('div');
-        poster.innerHTML = "<img src='" + parsed.Poster + "'>"
+
+        if (parsed.Poster != "N/A"){
+            poster.innerHTML = "<img src='" + parsed.Poster + "'>"    
+        } else {
+            poster.innerHTML = "Sorry there is no poster for this film"
+        }
+        
 
         var castName = parsed.Actors.split(',');
         var directorName = parsed.Director.split(',');
@@ -150,14 +118,12 @@ function singleMovie(movie){
             genre.appendChild(li);
         };
 
-
-
-        movieDets.appendChild(title);
-        movieDets.appendChild(poster);
-        movieDets.appendChild(cast);
-        movieDets.appendChild(directors);
-        movieDets.appendChild(writers);
-        movieDets.appendChild(genre);
+        page.appendChild(title);
+        page.appendChild(poster);
+        page.appendChild(cast);
+        page.appendChild(directors);
+        page.appendChild(writers);
+        page.appendChild(genre);
     })
     xhr.send();
 }

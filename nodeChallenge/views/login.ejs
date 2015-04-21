@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
+	<title>Movie Login</title>
+	<link href="login.css" rel='stylesheet'>
 </head>
 <body>
 
-	<h1> Welcome to the login page </h1>
-	<h3> Please enter your special key to enter this awesome party </h3>
+	<h1 id='landing'> Welcome to Movie Lister </h1>
+	<h3 class='sublanding'> Please login to get this party started</h3>
 	
 	<form action="session" method="POST">
 		<input name="username" placeholder="Your Username">
@@ -16,15 +17,17 @@
 	</form>
 	
 
-	<h3> If you are not currently a member and would like to be please submit your information here</h3>
+	<h3 class='sublanding'> If you're not on the guest list, have no fear! Submit your infomation here!</h3>
 
 
 	<form action="user" method="POST">
 		<input name="newName" placeholder="Your Username">
 		<input type="password" name="newPassword" placeholder="Your Password">
 		<input type="password" name="confirmPass" placeholder="Confirm Password">
-		<button>SUBMIT</button>
+		<button>Submit</button>
 	</form> 
+</div>
+
 
 	
 </body>

@@ -9,7 +9,7 @@ CREATE TABLE movies(
           title TEXT
 );
 
-CREATE TABLE joins(
+CREATE TABLE favorites(
           id INTEGER PRIMARY KEY,
           user_id INTEGER REFERENCES users,
           movie_id INTEGER REFERENCES movies

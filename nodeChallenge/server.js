@@ -11,7 +11,6 @@ var request = require('request');
 var ejs = require('ejs');
 var path = require('path');
 
-
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -22,6 +21,8 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
+
+var rtapi = fs.readFileSync('rtapi.txt', 'utf8');
 
 //renders the login.ejs file
 app.get('/', function(req,res){
@@ -37,11 +38,12 @@ app.post('/user', function(req,res){
 
 	if (req.body.newPassword === req.body.confirmPass){
 		var hash = bcrypt.hashSync(password, 8);
-		// Now the password is the hash you have created
+// Now the password is the hash you have created using bcrypt
 		db.run('INSERT INTO users(username, password) VALUES (?, ?)', username, hash, function(err){
 			if(err) { throw err;}
 
 		});
+//These res.redirects('/') will redirect to the app.get call above and show the user the login.ejs again
 		res.redirect('/');
 	} else {
 		res.redirect('/');
@@ -56,6 +58,7 @@ app.post('/session', function(req,res){
 	console.log("your password is " + password);
 	console.log("you are now in session post");
 
+//search through the users table. compare the submitted password with the password in the db
 	db.get('SELECT * FROM users WHERE username = ?', username, function(err, row){
 		if(err) {throw err;};
 		
@@ -87,7 +90,9 @@ app.get('/movies', function(req,res){
 app.get('/movies/:title', function(req, res){
   var title = req.params.title;
 
-  var urlRT = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=" + "tutuzpx6jygc5wretb22bqnj" + "&q=" + title;
+  // var urlRT = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=" + rtapi + "&q=" + title;
+
+  var urlRT = "http://www.omdbapi.com/?s=" + title
 
   request(urlRT, function(error, response, body){
     if (!error && response.statusCode == 200){
@@ -112,6 +117,7 @@ app.post('/movies/single/:title', function(req, res){
     }
   })
 
+//check the movies table to see if it already exist. if it doesn't then add the movie title
   db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
   	if(err) {throw err;};
 
@@ -128,6 +134,9 @@ app.post('/movies/single/:title', function(req, res){
 //tells you if you are connected, shows up in terminal
 app.listen(3000);
 console.log("we are connected to port 3000");
+
+
+
 
 // app.use(express.static(path.join(__dirname, '/public')));
 // app.use(bodyParser.urlencoded({ extended: false }));
