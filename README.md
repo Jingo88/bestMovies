@@ -280,7 +280,8 @@ Bonus Shameless plug! Learn to configure your ssh for an easier time logging int
 * **OMDB vs. RT**: OMDB is a great free database with a ton of information. However, it is slow at times, so I figured I could use a Rotten Tomatoes api to pull for multiple movies and the OMDB api to pull for a single movies details. 
 * and only gives you one movie per search. This means if you searched "Star wars", "Die Hard", "Kill Bill" and the like, you would only get a JSON file of the first movie. Rotten Tomatoes, does not provide very detailed information about movies, but does respond with a JSON file that has all movie titles containing the searched string.
 	* **Fun Fact**: In the OMDB documentation one of the updates was specifically for the "Lost" tv show because when users searched for "Lost" it would return only "Raiders of the Lost Ark"
-* **ONE LINE of jQuery**: 
+* **Selecting a Single element from document.getElementsByClassName**: This has been a mystery left unsolved for longer than time itself. Or at least longer than the math equation Matt Damon solved in the hallway in Good Will Hunting. Anyway here's the review for how I'm able to select ONE list item from multiple created list items with the same class name.  
+
 
 ```
    var multiMovie = document.getElementByClassName('classname');
@@ -311,9 +312,11 @@ Bonus Shameless plug! Learn to configure your ssh for an easier time logging int
 
 * removed search button, the user can just press enter
 * why not Rotten Tomatoes
+* removed var rtapi = fs.readFileSync('rtapi.txt', 'utf8');
 * OMDB Documentation does not show you can search for multiple movies
 * define.js to organize all the JS
 * login.css to organize css
+* created a rtapi.txt to bring in to safely secure the apikey no longer need it. this means you no longer need fs either
 * 
 
 

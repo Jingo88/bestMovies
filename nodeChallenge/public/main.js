@@ -12,11 +12,23 @@ function searchTitle(movie){
         if (movies.length >= 2){
             for (i=0; i<movies.length; i++){
                 var li=document.createElement('li');
-                li.innerHTML = "<a href=''>" + movies[i].Title + "</a>";
-                // li.innerHTML = movies[i].Title;
+                // li.innerHTML = "<a href=''>" + movies[i].Title + "</a>";
+                li.innerHTML = movies[i].Title;
                 li.setAttribute('class', 'multiMovie');
                 page.appendChild(li);
             };
+
+            var multiMovie = document.getElementsByClassName('multiMovie');
+            
+            var myFunction = function() {
+                singleMovie(this.innerText);
+                console.log(this.innerText);
+            };
+
+            for(var i=0;i<multiMovie.length;i++){
+                multiMovie[i].addEventListener('click', myFunction, false);
+            }
+
         } else {
             singleMovie(movie);
         }
@@ -52,7 +64,7 @@ function singleMovie(movie){
         var parsed = JSON.parse(d);
         console.log(parsed);
 
-
+        clearData();
         //create the categories and their headers
         var cast = document.createElement('ul');
         var directors = document.createElement('ul');
@@ -118,12 +130,18 @@ function singleMovie(movie){
             genre.appendChild(li);
         };
 
+        var button = document.createElement('button');
+        button.setAttribute('id', 'favSave');
+        button.innerText = "Save to Favorites!";
+
+
         page.appendChild(title);
         page.appendChild(poster);
         page.appendChild(cast);
         page.appendChild(directors);
         page.appendChild(writers);
         page.appendChild(genre);
+        page.appendChild(button);
     })
     xhr.send();
 }

@@ -22,8 +22,6 @@ app.use(session({
   saveUninitialized: true
 }));
 
-var rtapi = fs.readFileSync('rtapi.txt', 'utf8');
-
 //renders the login.ejs file
 app.get('/', function(req,res){
 	res.render('login.ejs', {});
@@ -76,6 +74,8 @@ app.post('/session', function(req,res){
 	});
 });
 
+
+
 //if verified, render the index.ejs file
 app.get('/movies', function(req,res){
 	if (req.session.valid_user === true){
@@ -84,6 +84,8 @@ app.get('/movies', function(req,res){
 		res.redirect('/');
 	} 
 });
+
+
 
 //searches through movie titles on the Rotten Tomatoes API.
 //Using RT because OMDB does not allow easy cycling through movies with the same title
@@ -117,6 +119,8 @@ app.post('/movies/single/:title', function(req, res){
     }
   })
 
+
+
 //check the movies table to see if it already exist. if it doesn't then add the movie title
   db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
   	if(err) {throw err;};
@@ -131,35 +135,9 @@ app.post('/movies/single/:title', function(req, res){
   console.log(omdburl);
 })
 
+
+
 //tells you if you are connected, shows up in terminal
 app.listen(3000);
 console.log("we are connected to port 3000");
-
-
-
-
-// app.use(express.static(path.join(__dirname, '/public')));
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
-
-// app.use('/', express.static(path.join(__dirname, 'public'));
-
-// app.get('/favorites', function(req, res){
-//   var data = fs.readFileSync('./data.json');
-//   res.setHeader('Content-Type', 'application/json');
-//   res.send(data);
-// ;
-
-// app.get('favorites', function(req, res){
-//   if(!req.body.name || !req.body.oid){
-//     res.send("Error");
-//     return
-  
-//   var data = JSON.parse(fs.readFileSync('./data.json'));
-//   data.push(req.body);
-//   fs.writeFile('./data.json', JSON.stringify(data));
-//   res.setHeader('Content-Type', 'application/json');
-//   res.send(data);
-// });
-
 
