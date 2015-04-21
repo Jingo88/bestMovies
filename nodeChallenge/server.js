@@ -16,17 +16,19 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+//sessions for login
 app.use(session({
   secret: "string",
   resave: false,
   saveUninitialized: true
 }));
 
+//renders the login.ejs file
 app.get('/', function(req,res){
 	res.render('login.ejs', {});
 });
 
-
+//creating a new user in the database
 app.post('/user', function(req,res){
 	var username = req.body.newName;
 	var password = req.body.newPassword;
@@ -46,6 +48,7 @@ app.post('/user', function(req,res){
 	}
 });
 
+//verifying the user with the password
 app.post('/session', function(req,res){
 	var username = req.body.username;
 	var password = req.body.password;
@@ -70,6 +73,7 @@ app.post('/session', function(req,res){
 	});
 });
 
+//if verified, render the index.ejs file
 app.get('/movies', function(req,res){
 	if (req.session.valid_user === true){
 		res.render('index.ejs', {});
@@ -78,23 +82,25 @@ app.get('/movies', function(req,res){
 	} 
 });
 
-// app.get('/', function(req, res){
-//   res.render('index.ejs', {});
-// });
+//searches for the movie title
+app.get('/movies/:title', function(req, res){
+  var title = req.params.title;
 
-// app.get('/:title', function(req, res){
-//   var title = req.params.title;
+  // var omdburl = "http://www.omdbapi.com/?t=" + title;
 
-//   var omdburl = "http://www.omdbapi.com/?t=" + title;
+  var urlRT = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=" + "tutuzpx6jygc5wretb22bqnj" + "&q=" + title;
 
-//   request(omdburl, function(error, response, body){
-//     if (!error && response.statusCode == 200){
-//       res.send(body);
-//     }
-//   })
-//   console.log(omdburl);
-// })
+  request(urlRT, function(error, response, body){
+    if (!error && response.statusCode == 200){
+      res.send(body);
+    }
+  })
+  console.log(urlRT);
+})
 
+//tells you if you are connected, shows up in terminal
+app.listen(3000);
+console.log("we are connected to port 3000");
 
 // app.use(express.static(path.join(__dirname, '/public')));
 // app.use(bodyParser.urlencoded({ extended: false }));
@@ -120,6 +126,4 @@ app.get('/movies', function(req,res){
 //   res.send(data);
 // });
 
-//tells you if you are connected, shows up in terminal
-app.listen(3000)
-console.log("we are connected to port 3000")
+

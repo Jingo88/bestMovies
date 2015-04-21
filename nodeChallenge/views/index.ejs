@@ -2,48 +2,31 @@
 <head>
 <meta charset="UTF-8">
 <title>Politics</title>
-	<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
-	<link href='http://fonts.googleapis.com/css?family=EB+Garamond' rel='stylesheet' type='text/css'>
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:800' rel='stylesheet' type='text/css'>
 	<link href="style.css" rel='stylesheet'>
 </head>
 <body>
 
 	<div id='searchbar'>
 		<div id='home'> <span id='RTH'>Home</span></div>
-<!-- 		<input class='bar' type='text' placeholder='Search By Last Name' id='findlastName'></input>
-		<button class='click' id='searchName'> Search Last Name </button>
 
-		<input class='bar' type='text' placeholder='Search By State ' id='findStateTwo'></input>
-		<button class='click' id='searchState'> Search State </button>	 -->	
+		<input class='bar' id='findTitle' type='text' placeholder='Search By Movie Title'></input>
+		<button class='click' id='titleButton'> Find It! </button>
 
-		<div class="container">
-		    <div class="row">
-		        <div class="col-md-4 col-md-offset-3">
-		            <form action="" class="search-form">
-		                <div class="form-group has-feedback">
-		            		<label for="search" class="sr-only">Search By Movie Title</label>
-		            		<input type="text" class="form-control" name="search" id="search" placeholder="Search By Movie Title">
-		              		<span class="glyphicon glyphicon-search form-control-feedback"></span>
-		            	</div>
-		            </form>
-		        </div>
-		    </div>
-		</div>
 	</div>
 
 	<div id='page'>
-		<h1 id='landing'>REP THE HOUSE</h1>
+		<h1 id='landing'>Best Movies</h1>
 
-		<h3 id='sublanding'> This is a website for you to research the current legislators in the United States House of Representatives. Do yourselves a favor and stay informed!</h3>
+		<h3 id='sublanding'> A site where you can search movies and save them to a favorites list.</h3>
 	</div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>	
-	<script src='define.js'></script>
+	<div id='movieList' class='multiMovie'>
+		
+	</div>
+
+
+
 	<script type='text/javascript' src='main.js'></script>
-	<script type="text/javascript" src='d3style.js'></script>
 
 </body>
 </html>

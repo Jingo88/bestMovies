@@ -1,6 +1,8 @@
 var homenav = document.querySelector('#home');
 var findTitle = document.querySelector('#findTitle');
 var titleButton = document.querySelector('#titleButton');
+var movieList = document.querySelector('#movieList');
+var bang = document.getElementsByClassName('.multiMovie');
 
 homenav.addEventListener('click', function(){
     var url = "/"
@@ -8,7 +10,7 @@ homenav.addEventListener('click', function(){
     xhr.open("GET", url);
 
     xhr.send();
-})
+});
 
 titleButton.addEventListener('click', function(){
     var movie = findTitle.value;
@@ -17,23 +19,34 @@ titleButton.addEventListener('click', function(){
     } else {
         alert('Please enter a movie title');
     }
-})
+});
 
 function searchTitle(movie){
-    var url = encodeURI(movie);
+    var url = '/movies/' + movie
     var xhr = new XMLHttpRequest();
-
-    console.log(url);
-
     xhr.open("GET", url);
 
     xhr.addEventListener('load', function(){
         var movieObj = JSON.parse(xhr.responseText);
         console.log(movieObj);
-    });
 
+        if (movieObj.total >= 2){
+            for (i=0; i<movieObj.total; i++){
+                var li=document.createElement('li');
+                li.innerHTML = "<a href=''>" + movieObj.movies[i].title + "</a>";
+                li.setAttribute('class', 'multiMovie')
+                movieList.appendChild(li);
+            };
+        } 
+    });
     xhr.send();
 };
+
+bang.addEventListener('click', function(){
+    console.log(this);
+});
+
+
 
 // function allBills(bioID) {
 //     var urlB = "/bills/" + bioID;
