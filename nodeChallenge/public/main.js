@@ -37,20 +37,6 @@ function searchTitle(movie){
     xhr.send();
 };
 
-
-// multiMovie.addEventListener('click', function(){
-//     console.log(this);
-// });
-
-// var myFunction = function() {
-//     var attribute = this.getAttribute("data-myattribute");
-//     console.log(this);
-// };
-
-// for(var i=0;i<multiMovie.length;i++){
-//     multiMovie[i].addEventListener('click', myFunction, false);
-// }
-
 function singleMovie(movie){
     
     var url = "movies/single/" + movie;
