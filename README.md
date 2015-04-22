@@ -331,6 +331,24 @@ app.get('/favList/', function(req, res){
 
 ```
 
+#### Logging out and Port Listening
+you can use the session.destroy to destroy the current session. However to get back to the login page this event send a json object to the main.js file. If the object matches a parameter that function will use the window.location command to render the login.ejs.
+
+```
+app.delete('/logout', function(req,res){
+	req.session.destroy();
+
+	console.log(req.session);
+	res.json("logout");
+})
+```
+Listen for port 3000 on your laptop, but for port 80 before pushing to DO.
+
+```
+app.listen(3000);
+console.log("we are connected to port 3000");
+```
+
 ## <a name=mainjs>Main.js</a>
 I will only be covering the material required to make the calls to the server and parse the data. Feel free to manipulate the DOM however you please. Some things you can consider are:
 

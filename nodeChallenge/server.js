@@ -23,6 +23,7 @@ app.use(session({
 
 //renders the login.ejs file
 app.get('/', function(req,res){
+	console.log(req.session);
 	res.render('login.ejs', {});
 });
 
@@ -217,7 +218,14 @@ app.get('/favList/', function(req, res){
 	})
 });
 
+app.delete('/logout', function(req,res){
+	console.log("ARE WE IN LOGOUT?");
+	console.log(req.session);
+	req.session.destroy();
 
+	console.log(req.session);
+	res.json("logout");
+})
 
 //tells you if you are connected, shows up in terminal. Make sure to turn this to port 80 when pushing to Digital Ocean
 app.listen(80);

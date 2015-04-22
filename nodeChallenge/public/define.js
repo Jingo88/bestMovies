@@ -6,6 +6,7 @@ var page = document.querySelector('#page');
 var home = document.querySelector('#home');
 var button = document.createElement('button');
 var userFav = document.querySelector('#favLink');
+var logout = document.querySelector('#logout');
 
 //use this to store the title of the current SINGLE movie the user is viewing
 var currentMovie = '';
@@ -49,4 +50,21 @@ home.addEventListener('click', function(){
     page.appendChild(landing);
     page.appendChild(sublanding);
 
+});
+
+logout.addEventListener('click', function(){
+
+    var url = '/logout';
+    var xhr = new XMLHttpRequest();
+    xhr.open("DELETE", url);
+
+    xhr.addEventListener('load', function(){
+        var success = JSON.parse(xhr.responseText);
+
+        console.log(success);
+        if (success === "logout"){
+            window.location = "/";
+        }
+    })
+    xhr.send();
 });

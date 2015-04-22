@@ -12,6 +12,24 @@ button{
 	outline: 0;
 }
 
+#logout{
+	position:absolute;
+	right: 5%;
+	bottom: 5%;
+	height: 50px;
+	width: 85px;
+	color: white;
+	background-color: black;
+	font-weight: 700;
+	font-size: 16px;
+}
+
+#logout:hover{
+	background-color: red;
+	color: black;
+	border: 2px solid black;
+}
+
 a{
 	color: #515151;
 }
