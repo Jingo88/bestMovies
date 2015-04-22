@@ -153,15 +153,38 @@ button.addEventListener('click', function(){
 userFav.addEventListener('click', function(){
 
     var url = '/favList/';
-
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url);
 
     xhr.addEventListener('load', function(){
-        var d = xhr.responseText;
-        var parsed = JSON.parse(d);
-        console.log(parsed);
-        console.log("We are now attempting attempting to get the favorites list");
+        var favList = JSON.parse(xhr.responseText);
+
+        clearData();
+
+        if (favList.length >= 1){
+            var h3 = document.createElement('h3');
+            h3.innerText = "Your Favorite Movies";
+            page.appendChild(h3);
+            
+            for(i=0; i<favList.length; i++){
+                var li=document.createElement('li');
+                li.innerHTML = favList[i];
+                li.setAttribute('class', 'favListItem');
+                page.appendChild(li);
+            }
+
+            var favListItem = document.getElementsByClassName('favListItem');
+            
+            var myFunction = function() {
+                singleMovie(this.innerText);
+            };
+
+            for(var j=0;j<favListItem.length;j++){
+                favListItem[j].addEventListener('click', myFunction, false);
+            }
+        } else {
+            alert("You have not favorited any movies");
+        }
     });
     xhr.send();
-})
+});

@@ -317,6 +317,6 @@ Bonus Shameless plug! Learn to configure your ssh for an easier time logging int
 * define.js to organize all the JS
 * login.css to organize css
 * created a rtapi.txt to bring in to safely secure the apikey no longer need it. this means you no longer need fs either
-* 
+* This Readme does not contain every single step, there are comments in my code to help as well
 
 

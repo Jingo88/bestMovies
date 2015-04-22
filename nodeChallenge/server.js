@@ -183,8 +183,6 @@ app.post('/movies/favAdd/:title', function(req,res){
 	})
 });
 
-
-
 app.get('/favList/', function(req, res){
 	var username = req.session.username;
 	var user_id = '';
@@ -201,7 +199,6 @@ app.get('/favList/', function(req, res){
 		}
 		db.all("SELECT * FROM favorites WHERE user_id = ?", user_id, function(err, rows){
 			if(err) {throw err;};
-			//only returning the first row and nothing else!
 
 			for (i=0; i<rows.length; i++){
 				movieArr.push(rows[i].movie_id);
