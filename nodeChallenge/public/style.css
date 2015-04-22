@@ -135,7 +135,7 @@ h3{
 }
 
 /*Styles the list of movies when they are populated from the "searchTitle" function*/
-.multiMovie{
+.multiMovie, .favListItem{
 	padding-top: 5px;
 	padding-bottom: 5px;
 	text-indent: 80px;
