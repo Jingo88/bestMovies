@@ -2,7 +2,7 @@
 
 Hello wonderful students! This tutorial was written as an outline for how to build a full fledged movie application. I have also provided an example of the project in this repo. There are certain parameters involved so feel free to visit the **Objectives** section whenever you want to get started.
 
-**A live demo of the web app can be viewed [here](45.55.252.156).**
+**A live demo of the web app can be viewed here[jason.princesspeach.nyc](jason.princesspeach.nyc).**
 
 ## Table of Contents
 

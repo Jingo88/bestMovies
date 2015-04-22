@@ -22,8 +22,8 @@ function searchTitle(movie){
             var multiMovie = document.getElementsByClassName('multiMovie');
             
             var getMovie = function() {
-                singleMovie(this.innerText);
-                console.log(this.innerText);
+                singleMovie(this.innerHTML);
+                console.log(this.innerHTML);
             };
 //If a title is clicked from the movie list run the getMovie function which will pass the elements text into the singleMovie function
             for(var i=0;i<multiMovie.length;i++){
@@ -76,7 +76,7 @@ function singleMovie(movie){
         dirHead.innerHTML = "Directors";
         writHead.innerHTML = "Writers";
         genreHead.innerHTML = "Genre";
-        otherHead.innerText = "Other Information";
+        otherHead.innerHTML = "Other Information";
 
         cast.appendChild(castHead);
         directors.appendChild(dirHead);
@@ -86,7 +86,7 @@ function singleMovie(movie){
 
 //bringing in the list of movie stuff
         var title = document.createElement('h3');
-        title.innerText = parsed.Title;
+        title.innerHTML = parsed.Title;
 
         var poster = document.createElement('div');
 
@@ -105,41 +105,41 @@ function singleMovie(movie){
 
         for (i=0; i<castName.length; i++){
             var li = document.createElement("li");
-            li.innerText = castName[i];
+            li.innerHTML = castName[i];
             cast.appendChild(li);
         };
 
         for (i=0; i<directorName.length; i++){
             var li = document.createElement("li");
-            li.innerText = directorName[i];
+            li.innerHTML = directorName[i];
             directors.appendChild(li);
         };
 
         for (i=0; i<writerName.length; i++){
             var li = document.createElement("li");
-            li.innerText = writerName[i];
+            li.innerHTML = writerName[i];
             writers.appendChild(li);
         };
 
         for (i=0; i<genreType.length; i++){
             var li = document.createElement("li");
-            li.innerText = genreType[i];
+            li.innerHTML = genreType[i];
             genre.appendChild(li);
         };
 
         button.setAttribute('id', 'favSave');
-        button.innerText = "Save to Favorites!";
+        button.innerHTML = "Save to Favorites!";
 
         currentMovie = parsed.Title;
 
         var rating = document.createElement('li');
-        rating.innerText = "Rating: " + parsed.Rated;
+        rating.innerHTML = "Rating: " + parsed.Rated;
         var runtime = document.createElement('li');
-        runtime.innerText = "Runtime: " + parsed.Runtime;
+        runtime.innerHTML = "Runtime: " + parsed.Runtime;
         var released = document.createElement('li');
-        released.innerText = "Released: " + parsed.Released;
+        released.innerHTML = "Released: " + parsed.Released;
         var plot = document.createElement('li');
-        plot.innerText = "Plot: " + parsed.Plot;
+        plot.innerHTML = "Plot: " + parsed.Plot;
 
         other.appendChild(rating);
         other.appendChild(runtime);
@@ -192,7 +192,7 @@ userFav.addEventListener('click', function(){
 
         if (favList.length >= 1){
             var h3 = document.createElement('h3');
-            h3.innerText = "Your Favorite Movies";
+            h3.innerHTML = "Your Favorite Movies";
             page.appendChild(h3);
 
             for(i=0; i<favList.length; i++){
@@ -207,7 +207,7 @@ userFav.addEventListener('click', function(){
             var favListItem = document.getElementsByClassName('favListItem');
 
             var myFunction = function() {
-                singleMovie(this.innerText);
+                singleMovie(this.innerHTML);
             };
 
             for(var j=0;j<favListItem.length;j++){
