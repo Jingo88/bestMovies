@@ -1,6 +1,6 @@
 #Movie Lister
 
-Hello wonderful students! This tutorial was written as an outline for how to build a full fledged movie application. There are certain parameters involed so feel free to visit the **Objectives** section whenever you want to get started.
+Hello wonderful students! This tutorial was written as an outline for how to build a full fledged movie application. I have also provided an example of the project in this repo. There are certain parameters involed so feel free to visit the **Objectives** section whenever you want to get started.
 
 ## Table of Contents
 
@@ -102,7 +102,7 @@ If you ever feel the need to change your table names or reset the data in your d
 
 ## <a name=server>Server</a>
 Your server.js file can get fairly long. We'll try to condense it here and hit the major points. 
-
+#### Require
 First require all the correct packages. Make sure to put these as dependencies in your package.json file, and .gitignore your node_modules folder.
 
 ```
@@ -118,6 +118,7 @@ var request = require('request');
 var ejs = require('ejs');
 ```
 
+#### Session / Create / Login
 Next we're going to use a session for authentication of the user.
 
 ```
@@ -128,42 +129,45 @@ app.use(session({
 }));
 ```
 
-When the user visits our site they should go to a login.ejs file with two different forms. One form should lead to the user logging in, and the other form should lead to the user creating an account, by inputing a name and password. If the user is logging in, we need to check the submitted password to the password in the database. If approved we will res.render the index.ejs file. These express events should look similar to the ones below:
+When the user visits our site they should go to a login.ejs file with two different forms. One form should lead to the user logging in, and the other form should lead to the user creating an account, by inputing a name and password. If the user is logging in, we need to check the submitted password against the password in the database. If approved we will res.render the index.ejs file. These express events from the provided exercise example is below:
+
+
+Let's render the login file
 
 ```
-//renders the login.ejs file
 app.get('/', function(req,res){
 	res.render('login.ejs', {});
 });
+```
+Now we'll create the event to see if a user is creating an account, and store that data. Mind the "bcrypt" portion, that creates the password has so the users actual password is not stored. Then redirect back to the login page for the user to sign in.
 
-//creating a new user in the database
+```
 app.post('/user', function(req,res){
 	var username = req.body.newName;
 	var password = req.body.newPassword;
+	console.log(username);
+	console.log(password);
 
 	if (req.body.newPassword === req.body.confirmPass){
 		var hash = bcrypt.hashSync(password, 8);
-// Now the password is the hash you have created using bcrypt
 		db.run('INSERT INTO users(username, password) VALUES (?, ?)', username, hash, function(err){
 			if(err) { throw err;}
 
 		});
-//redirect to login again
 		res.redirect('/');
 	} else {
 		res.redirect('/');
 	}
 });
+```
 
-//verifying the user with the password
+We are verifying the user at sign in. Select the user from the database and see if the stored password matches the submitted password. Pay attention to the two "req.session" below. We are creating more values in our session token to be used later.
+
+```
 app.post('/session', function(req,res){
 	var username = req.body.username;
 	var password = req.body.password;
-	console.log("your username is " + username);
-	console.log("your password is " + password);
-	console.log("you are now in session post");
 
-//search through the users table. compare the submitted password with the password in the db
 	db.get('SELECT * FROM users WHERE username = ?', username, function(err, row){
 		if(err) {throw err;};
 		
@@ -171,6 +175,7 @@ app.post('/session', function(req,res){
 			var passwordMatches = bcrypt.compareSync(password, row.password);
 			console.log(passwordMatches)
 			if (passwordMatches) { 
+
 				req.session.valid_user = true;
 				req.session.username = username;
 				res.redirect('/movies');	
@@ -181,10 +186,11 @@ app.post('/session', function(req,res){
 		}
 	});
 });
+```
 
+Once the user is verified the redirect will render the index.ejs file
 
-
-//if verified, render the index.ejs file
+```
 app.get('/movies', function(req,res){
 	if (req.session.valid_user === true){
 		res.render('index.ejs', {});
@@ -194,6 +200,55 @@ app.get('/movies', function(req,res){
 });
 ```	
 
+#### Movie Search 
+I have created two search events in the express server. 
+
+Below is the first search even triggered. 
+
+```
+app.get('/movies/:title', function(req, res){
+  var title = req.params.title;
+
+  var omdburl = "http://www.omdbapi.com/?s=" + title;
+
+  request(omdburl, function(error, response, body){
+    if (!error && response.statusCode == 200){
+      res.send(body);
+    }
+  })
+});
+```
+I built a second search event that will 
+
+```
+//Instead of creating the "singleMovie" function in my main.js over and over again in similar variations
+//I decided to create the below event which will pull data from the api based off the very specific title clicked on or searched
+//This event is also where the movies are added to the movie database
+app.post('/movies/single/:title', function(req, res){
+  var title = req.params.title;
+
+  var omdburl = "http://www.omdbapi.com/?t=" + title;
+
+  request(omdburl, function(error, response, body){
+    if (!error && response.statusCode == 200){
+      res.send(body);
+//enter a console.log here if you want to see the JSON file format for the movie details
+    }
+  })
+//check the movies table to see if it already exist. if it doesn't then add the movie title
+  db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
+  	if(err) {throw err;};
+
+  	if (row===undefined){
+  		db.run("INSERT INTO movies(title) VALUES (?)", title, function(err){
+  			if(err){throw err;};
+  			
+  		})
+  	}
+  });
+  console.log("This is the omdb url" + omdburl);
+});
+```
 The first movie search will hit the Rotten Tomatoes api. We do this to see if there is more than one movie to the searched title. If so it will send back the JSON file which we will loop through and create list items for the user to see. Creating the list items is done in main.js.
 
 ```
