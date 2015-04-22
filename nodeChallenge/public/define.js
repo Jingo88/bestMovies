@@ -11,12 +11,15 @@ var userFav = document.querySelector('#favLink');
 //use this to store the title of the current SINGLE movie the user is viewing
 var currentMovie = '';
 
+//This is a single page app, we will be using a "clearData" function to clean out the html in the "page" div and populate it with the information requested
 function clearData(){
     page.innerHTML = '';
     findTitle.value = '';
     currentMovie = '';
 }
 
+//The home nav will lead the user back to the home page with the landing text
+//Their session is logged in
 homenav.addEventListener('click', function(){
     var url = "/"
     var xhr = new XMLHttpRequest();
