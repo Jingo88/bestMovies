@@ -1,6 +1,8 @@
 #Movie Lister
 
-Hello wonderful students! This tutorial was written as an outline for how to build a full fledged movie application. I have also provided an example of the project in this repo. There are certain parameters involed so feel free to visit the **Objectives** section whenever you want to get started.
+Hello wonderful students! This tutorial was written as an outline for how to build a full fledged movie application. I have also provided an example of the project in this repo. There are certain parameters involved so feel free to visit the **Objectives** section whenever you want to get started.
+
+**A live demo of the web app can be viewed [here](45.55.252.156).**
 
 ## Table of Contents
 
@@ -11,12 +13,12 @@ Hello wonderful students! This tutorial was written as an outline for how to bui
 ##### [V. Server](#server)
 ##### [VI. Main.js](#mainjs)
 ##### [VII. Digital Ocean Hosting](#do)
-##### [VIII. Personal Notes on Project Process](#notes)
+##### [VIII. Personal Notes/Thoughts on Project Process](#notes)
 
 
 
 ## <a name=objectives>Objectives</a>
-**Your mission, should you choose to accept it** is to build a web application using an external movie api. Users will be able to save their "favorite" movies and view the list of their saved movies at any time. (Persistance!). **This message will self destruct in five seconds. Good luck** Okay nothing will explode, just follow the requirements below:
+**Your mission, should you choose to accept it** is to build a web application using an external movie api. Users will be able to save their "favorite" movies and view their movie list at any time. (Persistance!). **This message will self destruct in five seconds. Good luck** Okay nothing will explode, just follow the requirements below:
 
 * Your web application must use vanilla JavaScript
 * You will be using OMDB's free api 
@@ -50,7 +52,6 @@ What are the dependencies we should input into our "package.json" file?
 
 * express - we need a server
 * body-parser - aids in parsing data coming in
-* fs - we'll use this to read the txt file holding our api key
 * ejs - We will be using "ejs" files instead of "html" files
 * sqlite3 - use to create databases
 * bcrypt - secure the users passwords when the signup or login
@@ -61,7 +62,6 @@ What are the dependencies we should input into our "package.json" file?
   "dependencies": {
     "express": "^4.12.2",
     "body-parser": "^1.12.0",
-    "fs": "^0.0.2",
     "ejs": "^2.3.1",
     "sqlite3": "^3.0.4",
     "bcrypt": "^0.8.2",
@@ -72,7 +72,7 @@ What are the dependencies we should input into our "package.json" file?
 
 	
 ## <a name=db>Database</a>
-As mentioned in the above section we will be using "sqlite3" to create our database and store the information. What exactly are we storing? Three different tables. One for users, one for movies, and one for the relationship between users and movies when they add to their favorites list. Below is a light example of the schema.
+As mentioned in the above section we will be using "sqlite3" to create our database and store the information. What exactly are we storing? Three different tables. One for users, one for movies, and one for the relationship between users and movies when they add to their favorites list. Below is an example of the schema.
 
 ```
 CREATE TABLE users(
@@ -93,7 +93,7 @@ CREATE TABLE favorites(
 );
 ```
 
-Now to create the tables you can type (while in the root folder)
+Now to create the tables run the following command in the root folder
 
 ```
 sqlite3 bestMovies.db < db/schema.sql
@@ -130,7 +130,7 @@ app.use(session({
 }));
 ```
 
-When the user visits our site they should go to a login.ejs file with two different forms. One form should lead to the user logging in, and the other form should lead to the user creating an account, by inputing a name and password. If the user is logging in, we need to check the submitted password against the password in the database. If approved we will res.render the index.ejs file. These express events from the provided exercise example is below:
+When the user visits our site they will see a login page with two different forms. One form should lead to the user logging in, and the other form should lead to the user creating an account. If the user is logging in, we need to check the submitted password against the password in the database. If approved we will res.render the index.ejs file. These express events from the provided exercise example is below:
 
 
 Let's render the login file
@@ -140,7 +140,7 @@ app.get('/', function(req,res){
 	res.render('login.ejs', {});
 });
 ```
-Now we'll create the event to see if a user is creating an account, and store that data. Mind the "bcrypt" portion, that creates the password has so the users actual password is not stored. Then redirect back to the login page for the user to sign in.
+Now we'll create the event to see if a user is creating an account, and store that data. Mind the "bcrypt" portion, that creates the password hash so the users actual password is not stored. Then redirect back to the login page for the user to sign in.
 
 ```
 app.post('/user', function(req,res){
@@ -162,7 +162,7 @@ app.post('/user', function(req,res){
 });
 ```
 
-We are verifying the user at sign in. Select the user from the database and see if the stored password matches the submitted password. Pay attention to the two "req.session" below. We are creating more values in our session token to be used later.
+We are verifying the user that is signing in. Select the user from the database and see if the stored password matches the submitted password. Pay attention to the two "req.session" below. We are creating more values in our session token to be used later.
 
 ```
 app.post('/session', function(req,res){
@@ -204,7 +204,7 @@ app.get('/movies', function(req,res){
 #### Movie Search 
 I have created two search events in the express server. 
 
-Below is the first search even triggered. This is a "GET" request
+Below is the first search event triggered. This is a "GET" request
 
 ```
 app.get('/movies/:title', function(req, res){
@@ -250,7 +250,7 @@ Alright lets get into the nitty gritty of how to let users save their favorite m
 
 Here we are allowing the user to add movies to their "favorite" list. The first two "SELECT" iterations are getting us the user and movie id. The "DELETE" section is used to ensure movies cannot be duplicated on a users list. The "INSERT" is to create the relationship of between the user and movie in the "favorites" table. 
 
-Encapsulating these events within each other stopped the issues caused by JS async properties. For example, if you did not encapsulate them, sometimes the DELETE and or INSERT events may run before the user_id/movie_id is returned.
+Encapsulating these events within each other prevents issues caused by JS async properties. For example, if you did not encapsulate the db events, the DELETE or INSERT events may run before the user_id/movie_id is returned.
 
 ```
 app.post('/movies/favAdd/:title', function(req,res){
@@ -289,9 +289,9 @@ app.post('/movies/favAdd/:title', function(req,res){
 });
 ```
 
-Now lets get the users list of favorite movies. Here we are still encapsulating the database events. Remember that "req.session.username" I told you to pay attention to early on? Well now you get to use it!
+Now lets get the users list of favorite movies. Here we are still encapsulating the database events. Remember that "req.session.username" I told you to pay attention to earlier? Well now you get to use it!
 
-We also created two empty arrays to store the data we will be using throughout this event. (user_id --> movie_id --> movie_title)
+We also created two empty arrays to store the data we will be using throughout this event. The process for grabbing the proper data looks a little like this: **user_id --> movie_id --> movie_title**
 
 The last if statement is to ensure the res.send does not initiate until the for loops are completed
 
@@ -337,11 +337,12 @@ I will only be covering the material required to make the calls to the server an
 ```
 * Do you want a home button? 
 * What details do you want to show off? 
+* Are you having the list of movies, and a list of details appearing at the same time?
 * Maybe provide a movie poster? 
 * But what if the JSON file doesn't have a movie poster? 
 * How much of the DOM do you want to manipulate/create? vs. How much do you want to already have on the ejs file layout?
 ```
-Alright, lets see what our main.js can consist of. Lets start by making the call to search for a movie. You will want to create a "url" variable which will tell us what express point we are targeting. Also, make sure you are using the proper request! ("GET" vs. "POST"). Below is the "GET" function from the provided example:
+Alright, lets get into the meat and potatoes of this beautiful main.js file. We'll start by making the call to search for a movie. You will want to create a "url" variable which will tell us what express point we are targeting. Also, make sure you are using the proper request! ("GET" vs. "POST"). Below is the "GET" function from the provided example:
 
 ```
 function searchTitle(movie){
@@ -380,7 +381,7 @@ function searchTitle(movie){
     xhr.send();
 };
 ```
-Here is the "POST" function. This is the function to create the movie details when a single title is selected. You can console.log "parsed" to see how the data coming back is formatted. All of the createElements / setAttributes / appendChild are all for DOM Manipulation. In this example we are clearing out the HTML from the "page" div and repopulating it with the selected content.
+Here is the "POST" function. This is the function to create the movie details when a single title is selected. You can console.log "parsed" to see how the data coming back is formatted. All of the createElements / setAttributes / appendChild are all for DOM Manipulation. In this example we are clearing out the HTML from the "page" div (clearData()) and repopulating it with the selected content.
 
 ```
 function singleMovie(movie){
@@ -479,53 +480,28 @@ Bonus Shameless plug! Learn to configure your ssh for an easier time logging int
 
 ## <a name=notes> Personal Notes on Project Process</a>
 
-* **README.md**: This markdown was written as a tutorial catering to students. I tried to provide examples but not give too much information as well.  
-* **Sqlite3 and Bcrypt**: Creating three tables (users, movies, favorites) and used this to authenticate users and persist user data and favorited movies.
-* **Data.json**: Did not utilize data.json file. Wanted to provide authentication using bcrypt. 
-* **OMDB vs. RT**: OMDB is a great free database with a ton of information. However, it is slow at times, so I figured I could use a Rotten Tomatoes api to pull for multiple movies and the OMDB api to pull for a single movies details. 
-* and only gives you one movie per search. This means if you searched "Star wars", "Die Hard", "Kill Bill" and the like, you would only get a JSON file of the first movie. Rotten Tomatoes, does not provide very detailed information about movies, but does respond with a JSON file that has all movie titles containing the searched string.
-	* **Fun Fact**: In the OMDB documentation one of the updates was specifically for the "Lost" tv show because when users searched for "Lost" it would return only "Raiders of the Lost Ark"
-* **Selecting a Single element from document.getElementsByClassName**: This has been a mystery left unsolved for longer than time itself. Or at least longer than the math equation Matt Damon solved in the hallway in Good Will Hunting. Anyway here's the review for how I'm able to select ONE list item from multiple created list items with the same class name.  
-
+* **README.md**: I was slightly confused as to directions of how the README was to be presented. So I decided to try and me it a tutorial geared towards web development students.
+* **Data.json**: Did not utilize this file. I was filled with the grandiose notion that this web app would be cooler if users were able to create logins and authenticate. I hope I was right. 
+* **fs**: It was my intention to use the "fs" npm package to read an apikey file. I began writing code to use the Rotten Tomatoes api for the initial search(because it is way faster than OMDB), and then use the OMDB api for movie details. However I could not get an RT apikey in time, so I discarded the idea.
+* **OMDB API**: Great api, but their documentation only gives us the link for single movie searches. To find multiple movies with the same search title the api link is:
 
 ```
-   var multiMovie = document.getElementByClassName('classname');
-   multiMovie.addEventListener('click', function(){
-       console.log(this);
-   });
+http://www.omdbapi.com/?s=[movie title]
+```
+* **MVC**: I am currently teaching myself Angular, but did not feel I had sufficient time to deploy this app utilizing that framework. I hope to further this web app later on.
+* **Learn img tag**: Neat trick about centering an image tag. Give it an attribute of "align = center"
+* **Learn .gitkeep**: This is used to track empty directories because Git cannot add empty directories. Makes sense since .gitignore wouldn't really help you with that.
+* **Learn Vanilla JS**: Selecting a single element from list items created with the same class proved to be slightly difficult. This was one of my favorite obstacles I faced in this project. You cannot addEventListener to a variable that is "getElementsByClassName" because that returns an array, and you can't try to loop through that array as a global variable because it will run on load and your array will be empty. SCOPE!
 
 ```
-* This will return an error saying multiMovie.addEventListener is not a function. Remember getting an element by class name returns an array of those elements. 
-* Alright it's an array, lets try to loop through it and then add a listener
+      var multiMovie = document.getElementsByClassName('multiMovie');
+            
+      var getMovie = function() {
+          singleMovie(this.innerText);
+          console.log(this.innerText);
+      };
 
+      for(var i=0;i<multiMovie.length;i++){
+          multiMovie[i].addEventListener('click', getMovie, false);
+      }
 ```
-    var classname = document.getElementsByClassName("classname");
-
-    var myFunction = function() {
-        var attribute = this.getAttribute("data-myattribute");
-        alert(attribute);
-    };
-
-    for(var i=0;i<classname.length;i++){
-        classname[i].addEventListener('click', myFunction, false);
-    }
-```
-* This will return an empty array. When declared outside the function the array will be empty because the list items that are created and hold the class names do not appear until after a user searchs a movie(That comes back with multiple results).
-* So maybe it's a problem with scope? Let's dump this code inside the event listener with the created list items.
-
-
-
-* removed search button, the user can just press enter
-* why not Rotten Tomatoes
-* removed var rtapi = fs.readFileSync('rtapi.txt', 'utf8');
-* OMDB Documentation does not show you can search for multiple movies
-* define.js to organize all the JS
-* login.css to organize css
-* created a rtapi.txt to bring in to safely secure the apikey no longer need it. this means you no longer need fs either
-* This Readme does not contain every single step, there are comments in my code to help as well
-* Log Out Feature?
-* Img align set attribute
-* .gitkeep - this is used to track empty directories because Git cannot add empty directories
-* I initially included the "fs" 
-
-

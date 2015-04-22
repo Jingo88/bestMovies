@@ -5,7 +5,6 @@ var session = require('express-session');
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('bestMovies.db');
 var bcrypt = require('bcrypt');
-var fs = require('fs');
 var bodyParser=require('body-parser');
 var request = require('request');
 var ejs = require('ejs');
@@ -221,6 +220,6 @@ app.get('/favList/', function(req, res){
 
 
 //tells you if you are connected, shows up in terminal. Make sure to turn this to port 80 when pushing to Digital Ocean
-app.listen(3000);
+app.listen(80);
 console.log("we are connected to port 3000");
 
