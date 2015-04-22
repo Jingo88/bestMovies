@@ -15,41 +15,34 @@ Hello wonderful students! This tutorial was written as an outline for how to bui
 
 
 ## <a name=objectives>Objectives</a>
-Your goal is to build a full fledge movie list web application. You will pull from an external API to request movie data. Users should be able to save their "favorite" movies and view that list any time they feel like it. (Persistance!). Here are some rules and guidelines:
+**Your mission, should you choose to accept it** is to build a web application using an external movie api. Users will be able to save their "favorite" movies and view the list of their saved movies at any time. (Persistance!). **This message will self destruct in five seconds. Good luck** Okay nothing will explode, just follow the requirements below:
 
-* You can only use Vanilla JavaScript
-* Use external APIs (OMDB is free and open, Rotten Tomatoes is free but needs a key)
-	* We will be using both because OMDB does not seem to return multiple movies even with the same or similar titles. 
-* Users should be able to see a list of ALL movies with the searched title
-* Users should be able to click on a movie and see detailed information about the movie
-* Users can save a "favorite" movie
+* Your web application must use vanilla JavaScript
+* You will be using OMDB's free api 
+* Users should be able to see a list of ALL movies containing the searched title
+* Users should be able to click on a movie and view detailed information about that movie
+* Users can save a movie to their "favorites list"
 * The saved movie must persist.
 * Users can view their list of favorite movies
 
+
 ## <a name=layout>Blueprint</a>
-Let's begin to think about the web app from an architecture standpoint. How do you want to build this? What npm packages will you need? What files will go in what folders?
+Let's begin by formatting the layout of our application. Below is a list of the directory structure. Feel free to visit the example in this repo for more details
 
 * Root Directory
-	* db
-	* node_modules
-	* public
-	* views
-	* .gitignore - ignore the files that are not going to github. This includes the node_modules file and the file where you will be storing your api data.
-	* package.json - This file is used for others to "npm install" packages. Make sure the versions are all up to date.
-	* api.txt file - where you can store your api key if you are using one
-	* server.js
-	* movies.db - after you create your schema use the sqlite3 command to create the database in the root folder
+	* Our root directory will have several files
+		* server.js
+		* .gitignore - Use this to ignore the node_modules and database
+		* package.json - Use this to keep the dependencies updated for npm installing elsewhere
+		* movies.db - when you run your schema, your movies database should be in the root folder
+				
+	* The subfolders should be similar to this
+		* node_modules - holds your npm packages, will be ignored on git push. It will be created and populated by itself when you npm install packages
+		* public - contains your front end javascript and css stylesheet files
+		* views - contains your ejs file/s
+		* db - contains your schema, and seed files
 
-* db 
-	* schema.sql - use this to create your database
 
-* public
-	* main.js - Your main.js file will be making the request to the express server, and doing DOM manipulation
-	* style.css - Looks aren't everything but they sure as hell count
-
-* views
-	* login.ejs- initial page people see when they visit your site
-	* index.ejs - after logging in this will be a single page app making ajax calls to the external apis
 	
 ## <a name=npm>NPM Packages</a>
 What are the dependencies we should input into our "package.json" file? 
@@ -78,7 +71,7 @@ What are the dependencies we should input into our "package.json" file?
 
 	
 ## <a name=db>Database</a>
-As mentioned in the above section we will be using "sqlite3" to create our database and store the information. What exactly are we storing? We'll need a table for users, another for movies, and another table to connect the first two. Our schema.sql should look like this:
+As mentioned in the above section we will be using "sqlite3" to create our database and store the information. What exactly are we storing? Three different tables. One for users, one for movies, and one for the relationship between users and movies when they add to their favorites list. Below is a light example of the schema.
 
 ```
 CREATE TABLE users(
@@ -105,8 +98,10 @@ Now to create the tables you can type (while in the root folder)
 sqlite3 bestMovies.db < db/schema.sql
 ```
 
+If you ever feel the need to change your table names or reset the data in your database just remove your current db and rerun the command above. 
+
 ## <a name=server>Server</a>
-Let's make a short semi detailed layout of how to write up our Express.js server.
+Your server.js file can get fairly long. We'll try to condense it here and hit the major points. 
 
 First require all the correct packages. Make sure to put these as dependencies in your package.json file, and .gitignore your node_modules folder.
 
@@ -131,9 +126,6 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-
-//for pulling in the api key later
-var rtapi = fs.readFileSync('rtapi.txt', 'utf8');
 ```
 
 When the user visits our site they should go to a login.ejs file with two different forms. One form should lead to the user logging in, and the other form should lead to the user creating an account, by inputing a name and password. If the user is logging in, we need to check the submitted password to the password in the database. If approved we will res.render the index.ejs file. These express events should look similar to the ones below:
@@ -148,8 +140,6 @@ app.get('/', function(req,res){
 app.post('/user', function(req,res){
 	var username = req.body.newName;
 	var password = req.body.newPassword;
-	console.log(username);
-	console.log(password);
 
 	if (req.body.newPassword === req.body.confirmPass){
 		var hash = bcrypt.hashSync(password, 8);
@@ -158,7 +148,7 @@ app.post('/user', function(req,res){
 			if(err) { throw err;}
 
 		});
-//These res.redirects('/') will redirect to the app.get call above and show the user the login.ejs again
+//redirect to login again
 		res.redirect('/');
 	} else {
 		res.redirect('/');
@@ -182,6 +172,7 @@ app.post('/session', function(req,res){
 			console.log(passwordMatches)
 			if (passwordMatches) { 
 				req.session.valid_user = true;
+				req.session.username = username;
 				res.redirect('/movies');	
 			}
 
@@ -190,6 +181,8 @@ app.post('/session', function(req,res){
 		}
 	});
 });
+
+
 
 //if verified, render the index.ejs file
 app.get('/movies', function(req,res){
@@ -318,5 +311,9 @@ Bonus Shameless plug! Learn to configure your ssh for an easier time logging int
 * login.css to organize css
 * created a rtapi.txt to bring in to safely secure the apikey no longer need it. this means you no longer need fs either
 * This Readme does not contain every single step, there are comments in my code to help as well
+* Log Out Feature?
+* Img align set attribute
+* .gitkeep - this is used to track empty directories because Git cannot add empty directories
+* I initially included the "fs" 
 
 

@@ -17,6 +17,7 @@ a{
 }
 /*Styles the div that all DOM manipulation will go through*/
 #page{
+	padding: 2%;
 	position: absolute;
 	top: 15%;
 	height: auto;
@@ -103,13 +104,47 @@ a{
 	color:black;
 }
 
+/*Styles the page div when populated with Movie Details*/
+ul{
+	text-align: center;
+	list-style-type: none;
+	padding: 0;
+}
+h3{
+	text-align: center;
+	text-decoration: underline;
+}
+
 /*Styles the list of movies when they are populated from the "searchTitle" function*/
 .multiMovie{
-
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-indent: 80px;
 }
 
 /*Styles the "Save to Favorites" Button*/
-
 #favSave{
-	
+  background: #d93434;
+  background-image: -webkit-linear-gradient(top, #d93434, #000000);
+  background-image: -moz-linear-gradient(top, #d93434, #000000);
+  background-image: -ms-linear-gradient(top, #d93434, #000000);
+  background-image: -o-linear-gradient(top, #d93434, #000000);
+  background-image: linear-gradient(to bottom, #d93434, #000000);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  position: relative;
+  left: 30%;
+}
+
+#favSave:hover {
+  background: #F6FDFB;
+  color: black;
+  border: 2px solid black;
+  text-decoration: none;
 }

@@ -55,21 +55,25 @@ function singleMovie(movie){
         var directors = document.createElement('ul');
         var writers = document.createElement('ul');
         var genre = document.createElement('ul');
+        var other = document.createElement('ul');
 
         var castHead = document.createElement('h3');
         var dirHead = document.createElement('h3');
         var writHead = document.createElement('h3');
         var genreHead = document.createElement('h3');
+        var otherHead = document.createElement('h3');
 
         castHead.innerHTML = "Cast";
         dirHead.innerHTML = "Directors";
         writHead.innerHTML = "Writers";
         genreHead.innerHTML = "Genre";
+        otherHead.innerText = "Other Information";
 
         cast.appendChild(castHead);
         directors.appendChild(dirHead);
         writers.appendChild(writHead);
         genre.appendChild(genreHead);
+        other.appendChild(otherHead);
 
         //bringing in the list of movie stuff
         var title = document.createElement('h3');
@@ -78,9 +82,10 @@ function singleMovie(movie){
         var poster = document.createElement('div');
 
         if (parsed.Poster != "N/A"){
-            poster.innerHTML = "<img src='" + parsed.Poster + "'>"    
+            poster.innerHTML = "<img src='" + parsed.Poster + "'>";
+            poster.setAttribute('align', 'middle');    
         } else {
-            poster.innerHTML = "Sorry there is no poster for this film"
+            poster.innerHTML = "Sorry there is no poster for this film!";
         }
         
 
@@ -118,12 +123,27 @@ function singleMovie(movie){
 
         currentMovie = parsed.Title;
 
-        page.appendChild(title);
+        var rating = document.createElement('li');
+        rating.innerText = "Rating: " + parsed.Rated;
+        var runtime = document.createElement('li');
+        runtime.innerText = "Runtime: " + parsed.Runtime;
+        var released = document.createElement('li');
+        released.innerText = "Released: " + parsed.Released;
+        var plot = document.createElement('li');
+        plot.innerText = "Plot: " + parsed.Plot;
+
+        other.appendChild(rating);
+        other.appendChild(runtime);
+        other.appendChild(released);
+        other.appendChild(plot);
+
         page.appendChild(poster);
+        page.appendChild(title);
         page.appendChild(cast);
         page.appendChild(directors);
         page.appendChild(writers);
         page.appendChild(genre);
+        page.appendChild(other);
         page.appendChild(button);
     });
     xhr.send();
@@ -143,7 +163,7 @@ button.addEventListener('click', function(){
         var d = xhr.responseText;
         var parsed = JSON.parse(d);
         console.log(parsed);
-        console.log("We are now attempting to add to the favorites table");
+        alert('This movie has been added to your list. Please click the "Your Favorites" button on the top right to view your current list.')
     });
     xhr.send();
 });
@@ -165,7 +185,7 @@ userFav.addEventListener('click', function(){
             var h3 = document.createElement('h3');
             h3.innerText = "Your Favorite Movies";
             page.appendChild(h3);
-            
+
             for(i=0; i<favList.length; i++){
                 var li=document.createElement('li');
                 li.innerHTML = favList[i];
