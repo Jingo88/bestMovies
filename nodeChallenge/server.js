@@ -201,7 +201,6 @@ app.get('/favList/', function(req, res){
 
 			for (i=0; i<rows.length; i++){
 				movieArr.push(rows[i].movie_id);
-				console.log(movieArr);
 			}
 
 			for (j=0; j<movieArr.length; j++){

@@ -1,5 +1,4 @@
 //This file will hold the query selectors, event listeners, and clear data function
-var homenav = document.querySelector('#home');
 var findTitle = document.querySelector('#findTitle');
 var titleButton = document.querySelector('#titleButton');
 var multiMovie = document.querySelector('#movieList');
@@ -18,21 +17,13 @@ function clearData(){
     currentMovie = '';
 }
 
-//The home nav will lead the user back to the home page with the landing text
-//Their session is logged in
-homenav.addEventListener('click', function(){
-    var url = "/"
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-
-    xhr.send();
-});
-
 //search using enter key
 findTitle.addEventListener('keyup', function(e){
     if (e.keyCode === 13){
         var movie = findTitle.value;
-        
+
+//If there is something in the input field run the search function
+//If the input field is empty alert the user
         if (movie != ''){
             searchTitle(movie);
         } else {
@@ -41,9 +32,12 @@ findTitle.addEventListener('keyup', function(e){
     }
 });
 
+//Will bring the user back to the splash text
 home.addEventListener('click', function(){
+//clear the page div
     clearData();
 
+//repopulate the page div
     var landing = document.createElement('h1');
         landing.setAttribute('id', 'landing');
         landing.innerHTML = "Best Movies";

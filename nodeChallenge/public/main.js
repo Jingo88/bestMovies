@@ -1,3 +1,4 @@
+//This is the initial search function
 function searchTitle(movie){
     var url = '/movies/' + movie
     var xhr = new XMLHttpRequest();
@@ -7,8 +8,9 @@ function searchTitle(movie){
         var movieObj = JSON.parse(xhr.responseText);
         var movies = movieObj.Search;
         console.log(movieObj);
-
+//clear all the html from the "page" div
         clearData();
+//if there is more than one movie create a list only showing the titles
         if (movies.length >= 2){
             for (i=0; i<movies.length; i++){
                 var li=document.createElement('li');
@@ -16,26 +18,30 @@ function searchTitle(movie){
                 li.setAttribute('class', 'multiMovie');
                 page.appendChild(li);
             };
-
+//Vanilla JS way of making those titles clickable and returning only the contents of the clicked element
             var multiMovie = document.getElementsByClassName('multiMovie');
             
-            var myFunction = function() {
+            var getMovie = function() {
                 singleMovie(this.innerText);
                 console.log(this.innerText);
             };
-
+//If a title is clicked from the movie list run the getMovie function which will pass the elements text into the singleMovie function
             for(var i=0;i<multiMovie.length;i++){
-                multiMovie[i].addEventListener('click', myFunction, false);
+                multiMovie[i].addEventListener('click', getMovie, false);
             }
-
+//If there is only one movie run the singleMovie function
         } else {
             singleMovie(movie);
         }
-
     });
     xhr.send();
 };
 
+//This function is going to be called upon whenever we are looking for movie details
+//If a movie is searched and only one exists
+//If a movie is clicked in the searched list
+//If a movie is clicked in the favorites list
+//This looks like a super long difficult function but half of it is strictly repitition
 function singleMovie(movie){
     
     var url = "movies/single/" + movie;
@@ -47,10 +53,13 @@ function singleMovie(movie){
 
         var d = xhr.responseText;
         var parsed = JSON.parse(d);
+//console.log to see how the JSON data is formatted        
         console.log(parsed);
 
+//clear the page div
         clearData();
-        //create the categories and their headers
+
+//create the categories and their headers
         var cast = document.createElement('ul');
         var directors = document.createElement('ul');
         var writers = document.createElement('ul');
@@ -75,7 +84,7 @@ function singleMovie(movie){
         genre.appendChild(genreHead);
         other.appendChild(otherHead);
 
-        //bringing in the list of movie stuff
+//bringing in the list of movie stuff
         var title = document.createElement('h3');
         title.innerText = parsed.Title;
 
@@ -83,12 +92,12 @@ function singleMovie(movie){
 
         if (parsed.Poster != "N/A"){
             poster.innerHTML = "<img src='" + parsed.Poster + "'>";
+//Really cool trick to center an img tag
             poster.setAttribute('align', 'middle');    
         } else {
             poster.innerHTML = "Sorry there is no poster for this film!";
         }
         
-
         var castName = parsed.Actors.split(',');
         var directorName = parsed.Director.split(',');
         var writerName = parsed.Writer.split(',');
@@ -137,6 +146,7 @@ function singleMovie(movie){
         other.appendChild(released);
         other.appendChild(plot);
 
+//Append all of these items to the page div in the order you want them to show
         page.appendChild(poster);
         page.appendChild(title);
         page.appendChild(cast);
@@ -151,10 +161,9 @@ function singleMovie(movie){
 
 //This event Listener will add to the favorites list
 button.addEventListener('click', function(){
-    console.log("The Current Movie is " + currentMovie);
+//Remember that current movie title you stored in define.js
+//How convenient we can just use that to make the proper call to our server
     var url = '/movies/favAdd/' + currentMovie;
-    console.log("The url for adding in main.js is " + url );
-
 
     var xhr = new XMLHttpRequest();
     xhr.open("POST", url);
@@ -192,9 +201,11 @@ userFav.addEventListener('click', function(){
                 li.setAttribute('class', 'favListItem');
                 page.appendChild(li);
             }
-
+//Same process as the beginning search function
+//Allows the user to click a specific title in the list
+//And run the singleMovie function on the selected title
             var favListItem = document.getElementsByClassName('favListItem');
-            
+
             var myFunction = function() {
                 singleMovie(this.innerText);
             };
