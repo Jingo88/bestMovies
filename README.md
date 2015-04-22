@@ -9,8 +9,9 @@ Hello wonderful students! This tutorial was written as an outline for how to bui
 ##### [III. NPM Packages](#npm)
 ##### [IV. Database](#db)
 ##### [V. Server](#server)
-##### [Digital Ocean Hosting](#do)
-##### [Project Notes](#notes)
+##### [VI. Main.js](#mainjs)
+##### [VII. Digital Ocean Hosting](#do)
+##### [VIII. Personal Notes on Project Process](#notes)
 
 
 
@@ -203,7 +204,7 @@ app.get('/movies', function(req,res){
 #### Movie Search 
 I have created two search events in the express server. 
 
-Below is the first search even triggered. 
+Below is the first search even triggered. This is a "GET" request
 
 ```
 app.get('/movies/:title', function(req, res){
@@ -218,62 +219,9 @@ app.get('/movies/:title', function(req, res){
   })
 });
 ```
-I built a second search event that will 
+I built a second search event that will search for a single specific title. This is a "POST" request. This second function allows us to utilize the "singleMovie" function in the main.js over and over again. The single movie function is a long function that populates the details of a selected movie. In this second function we also search the databse to see if the movie is already in there, and if it isn't we bring it in. You can console.log the request body to see the JSON format in your terminal. It will be easier to view the data through a console.log in your main.js file.
 
 ```
-//Instead of creating the "singleMovie" function in my main.js over and over again in similar variations
-//I decided to create the below event which will pull data from the api based off the very specific title clicked on or searched
-//This event is also where the movies are added to the movie database
-app.post('/movies/single/:title', function(req, res){
-  var title = req.params.title;
-
-  var omdburl = "http://www.omdbapi.com/?t=" + title;
-
-  request(omdburl, function(error, response, body){
-    if (!error && response.statusCode == 200){
-      res.send(body);
-//enter a console.log here if you want to see the JSON file format for the movie details
-    }
-  })
-//check the movies table to see if it already exist. if it doesn't then add the movie title
-  db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
-  	if(err) {throw err;};
-
-  	if (row===undefined){
-  		db.run("INSERT INTO movies(title) VALUES (?)", title, function(err){
-  			if(err){throw err;};
-  			
-  		})
-  	}
-  });
-  console.log("This is the omdb url" + omdburl);
-});
-```
-The first movie search will hit the Rotten Tomatoes api. We do this to see if there is more than one movie to the searched title. If so it will send back the JSON file which we will loop through and create list items for the user to see. Creating the list items is done in main.js.
-
-```
-//searches through movie titles on the Rotten Tomatoes API.
-//Using RT because OMDB does not allow easy cycling through movies with the same title
-app.get('/movies/:title', function(req, res){
-  var title = req.params.title;
-
-  var urlRT = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=" + rtapi + "&q=" + title;
-
-  request(urlRT, function(error, response, body){
-    if (!error && response.statusCode == 200){
-      res.send(body);
-      console.log(body);
-    }
-  })
-  console.log(urlRT);
-});
-```
-
-But what happens when there is only one movie? This is where that sweet free OMDB api comes in. 
-
-```
-//This gets the info from OMDB because they have more movie details
-//It will also search the current movies tables, and add new movies there if they are not there already
 app.post('/movies/single/:title', function(req, res){
   var title = req.params.title;
 
@@ -284,8 +232,6 @@ app.post('/movies/single/:title', function(req, res){
       res.send(body);
     }
   })
-
-//check the movies table to see if it already exist. if it doesn't then add the movie title
   db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
   	if(err) {throw err;};
 
@@ -296,19 +242,230 @@ app.post('/movies/single/:title', function(req, res){
   		})
   	}
   });
-  console.log(omdburl);
-})
+});
 ```
 
-* require the packages
-* app.use - session
-* app.get - login
-* app.post - user (create)
-* app.post - session (login)
-* app.get - index (authenticated)
-* app.get - movies1 (multiple movie list)
-* app.post - movies2 (single movie found, push to db, send movie details to main.js)
-* app.listen - what port
+#### Storing Favorites / Viewing Your Favorites List
+Alright lets get into the nitty gritty of how to let users save their favorite movies, and then see a list of that **PERSISTED** data.
+
+Here we are allowing the user to add movies to their "favorite" list. The first two "SELECT" iterations are getting us the user and movie id. The "DELETE" section is used to ensure movies cannot be duplicated on a users list. The "INSERT" is to create the relationship of between the user and movie in the "favorites" table. 
+
+Encapsulating these events within each other stopped the issues caused by JS async properties. For example, if you did not encapsulate them, sometimes the DELETE and or INSERT events may run before the user_id/movie_id is returned.
+
+```
+app.post('/movies/favAdd/:title', function(req,res){
+	var username = req.session.username;
+	var title = req.params.title;
+	var user_id = '';
+	var movie_id = '';
+
+	db.get("SELECT * FROM users WHERE username = ?", username,function(err, row){
+		if(err) {throw err;};
+
+		if (row != undefined){	
+			user_id = row.id;
+		}
+
+		db.get("SELECT * FROM movies WHERE title = ?", title,function(err, row){
+			if(err) {throw err;};
+			if (row != undefined){
+				movie_id = row.id;
+			}
+
+			db.run("DELETE FROM favorites WHERE user_id = ? AND movie_id = ?", user_id, movie_id, function(err){
+				if(err){ throw err;};
+		
+				db.run("INSERT INTO favorites(user_id, movie_id) VALUES (?, ?)", user_id, movie_id, function(err){
+					if(err) {throw err;}
+					var id = this.lastID;
+					db.get("SELECT * FROM favorites WHERE id = ?", id, function(err, row){
+						if(err) {throw err;} 
+							res.json(row);
+					});
+				})
+			});
+		})
+	})
+});
+```
+
+Now lets get the users list of favorite movies. Here we are still encapsulating the database events. Remember that "req.session.username" I told you to pay attention to early on? Well now you get to use it!
+
+We also created two empty arrays to store the data we will be using throughout this event. (user_id --> movie_id --> movie_title)
+
+The last if statement is to ensure the res.send does not initiate until the for loops are completed
+
+```
+app.get('/favList/', function(req, res){
+	var username = req.session.username;
+	var user_id = '';
+	var movieArr = [];
+	var movieTitles = [];
+
+	db.get("SELECT * FROM users WHERE username = ?", username, function(err, row){
+		if(err) {throw err;};
+
+		if(row != undefined){
+			user_id = row.id;
+		}
+		db.all("SELECT * FROM favorites WHERE user_id = ?", user_id, function(err, rows){
+			if(err) {throw err;};
+
+			for (i=0; i<rows.length; i++){
+				movieArr.push(rows[i].movie_id);
+			}
+
+			for (j=0; j<movieArr.length; j++){
+				db.get("SELECT * FROM movies WHERE id = ?", movieArr[j], function(err, row){
+					if(err) {throw err;};
+					movieTitles.push(row.title);
+
+					if(movieTitles.length === movieArr.length){
+						res.send(movieTitles);
+					}
+				})
+			};
+		})
+	})
+});
+
+```
+
+## <a name=mainjs>Main.js</a>
+I will only be covering the material required to make the calls to the server and parse the data. Feel free to manipulate the DOM however you please. Some things you can consider are:
+
+```
+* Do you want a home button? 
+* What details do you want to show off? 
+* Maybe provide a movie poster? 
+* But what if the JSON file doesn't have a movie poster? 
+* How much of the DOM do you want to manipulate/create? vs. How much do you want to already have on the ejs file layout?
+```
+Alright, lets see what our main.js can consist of. Lets start by making the call to search for a movie. You will want to create a "url" variable which will tell us what express point we are targeting. Also, make sure you are using the proper request! ("GET" vs. "POST"). Below is the "GET" function from the provided example:
+
+```
+function searchTitle(movie){
+    var url = '/movies/' + movie
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+
+    xhr.addEventListener('load', function(){
+        var movieObj = JSON.parse(xhr.responseText);
+        var movies = movieObj.Search;
+        console.log(movieObj);
+        clearData();
+
+        if (movies.length >= 2){
+            for (i=0; i<movies.length; i++){
+                var li=document.createElement('li');
+                li.innerHTML = movies[i].Title;
+                li.setAttribute('class', 'multiMovie');
+                page.appendChild(li);
+            };
+
+            var multiMovie = document.getElementsByClassName('multiMovie');
+            
+            var getMovie = function() {
+                singleMovie(this.innerText);
+                console.log(this.innerText);
+            };
+
+            for(var i=0;i<multiMovie.length;i++){
+                multiMovie[i].addEventListener('click', getMovie, false);
+            }
+        } else {
+            singleMovie(movie);
+        }
+    });
+    xhr.send();
+};
+```
+Here is the "POST" function. This is the function to create the movie details when a single title is selected. You can console.log "parsed" to see how the data coming back is formatted. All of the createElements / setAttributes / appendChild are all for DOM Manipulation. In this example we are clearing out the HTML from the "page" div and repopulating it with the selected content.
+
+```
+function singleMovie(movie){
+    
+    var url = "movies/single/" + movie;
+    var xhr = new XMLHttpRequest();
+
+    xhr.open("POST", url);
+
+    xhr.addEventListener('load', function(e) {
+
+        var d = xhr.responseText;
+        var parsed = JSON.parse(d);
+        console.log(parsed);
+
+        clearData();
+
+        var cast = document.createElement('ul');
+        var directors = document.createElement('ul');
+        var writers = document.createElement('ul');
+        var genre = document.createElement('ul');
+
+        var castHead = document.createElement('h3');
+        var dirHead = document.createElement('h3');
+        var writHead = document.createElement('h3');
+        var genreHead = document.createElement('h3');
+
+        castHead.innerHTML = "Cast";
+        dirHead.innerHTML = "Directors";
+        writHead.innerHTML = "Writers";
+        genreHead.innerHTML = "Genre";
+
+        cast.appendChild(castHead);
+        directors.appendChild(dirHead);
+        writers.appendChild(writHead);
+        genre.appendChild(genreHead);
+
+        var title = document.createElement('h3');
+        title.innerText = parsed.Title;
+        
+        var castName = parsed.Actors.split(',');
+        var directorName = parsed.Director.split(',');
+        var writerName = parsed.Writer.split(',');
+        var genreType = parsed.Genre.split(',');
+
+        for (i=0; i<castName.length; i++){
+            var li = document.createElement("li");
+            li.innerText = castName[i];
+            cast.appendChild(li);
+        };
+
+        for (i=0; i<directorName.length; i++){
+            var li = document.createElement("li");
+            li.innerText = directorName[i];
+            directors.appendChild(li);
+        };
+
+        for (i=0; i<writerName.length; i++){
+            var li = document.createElement("li");
+            li.innerText = writerName[i];
+            writers.appendChild(li);
+        };
+
+        for (i=0; i<genreType.length; i++){
+            var li = document.createElement("li");
+            li.innerText = genreType[i];
+            genre.appendChild(li);
+        };
+
+        button.setAttribute('id', 'favSave');
+        button.innerText = "Save to Favorites!";
+
+        currentMovie = parsed.Title;
+
+        page.appendChild(title);
+        page.appendChild(cast);
+        page.appendChild(directors);
+        page.appendChild(writers);
+        page.appendChild(genre);
+        page.appendChild(button);
+    });
+    xhr.send();
+};
+
+```
 
 ## <a name=do>Digital Ocean Hosting</a>
 Shameless plug! Visit my other tutorial on how to host a node app on Digital Ocean. 
@@ -320,7 +477,7 @@ Bonus Shameless plug! Learn to configure your ssh for an easier time logging int
 * [How to Vim / Bash / SSH Config](https://github.com/Jingo88/Tutorial-How_To_VIM_Bash_and_SSHConfig)
 
 
-## <a name=notes> Project Notes</a>
+## <a name=notes> Personal Notes on Project Process</a>
 
 * **README.md**: This markdown was written as a tutorial catering to students. I tried to provide examples but not give too much information as well.  
 * **Sqlite3 and Bcrypt**: Creating three tables (users, movies, favorites) and used this to authenticate users and persist user data and favorited movies.
