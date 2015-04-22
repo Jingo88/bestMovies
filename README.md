@@ -2,7 +2,7 @@
 
 Hello wonderful students! This tutorial was written as an outline for how to build a full fledged movie application. I have also provided an example of the project in this repo. There are certain parameters involved so feel free to visit the **Objectives** section whenever you want to get started.
 
-**A live demo of the web app can be viewed here[jason.princesspeach.nyc](jason.princesspeach.nyc).**
+**A live demo of the web app can be viewed here [jason.princesspeach.nyc](jason.princesspeach.nyc).**
 
 ## Table of Contents
 
@@ -102,7 +102,8 @@ sqlite3 bestMovies.db < db/schema.sql
 If you ever feel the need to change your table names or reset the data in your database just remove your current db and rerun the command above. 
 
 ## <a name=server>Server</a>
-Your server.js file can get fairly long. We'll try to condense it here and hit the major points. 
+Your server file can get fairly long. This tutorial will point out some of the necessities, and provide some hints and samples for you to reference to
+ 
 #### Require
 First require all the correct packages. Make sure to put these as dependencies in your package.json file, and .gitignore your node_modules folder.
 
@@ -113,7 +114,6 @@ var session = require('express-session');
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database('bestMovies.db');
 var bcrypt = require('bcrypt');
-var fs = require('fs');
 var bodyParser=require('body-parser');
 var request = require('request');
 var ejs = require('ejs');
@@ -189,22 +189,13 @@ app.post('/session', function(req,res){
 });
 ```
 
-Once the user is verified the redirect will render the index.ejs file
+Once you're all done here make sure to make a request to render the index.ejs file if the user is authenticated.
 
-```
-app.get('/movies', function(req,res){
-	if (req.session.valid_user === true){
-		res.render('index.ejs', {});
-	} else {
-		res.redirect('/');
-	} 
-});
-```	
+**BONUS** What about allowing the user to log out of their session?
+
 
 #### Movie Search 
-I have created two search events in the express server. 
-
-Below is the first search event triggered. This is a "GET" request
+Below is a "GET" request that pulls data from the omdb api.
 
 ```
 app.get('/movies/:title', function(req, res){
@@ -219,36 +210,15 @@ app.get('/movies/:title', function(req, res){
   })
 });
 ```
-I built a second search event that will search for a single specific title. This is a "POST" request. This second function allows us to utilize the "singleMovie" function in the main.js over and over again. The single movie function is a long function that populates the details of a selected movie. In this second function we also search the databse to see if the movie is already in there, and if it isn't we bring it in. You can console.log the request body to see the JSON format in your terminal. It will be easier to view the data through a console.log in your main.js file.
 
-```
-app.post('/movies/single/:title', function(req, res){
-  var title = req.params.title;
+In the example code provided in this repo, I used a second request that will be called on a single specific title. It is here I also added movies to the database. Your api request and database requests are dependent on how you want to display the movie information. 
 
-  var omdburl = "http://www.omdbapi.com/?t=" + title;
-
-  request(omdburl, function(error, response, body){
-    if (!error && response.statusCode == 200){
-      res.send(body);
-    }
-  })
-  db.get("SELECT * FROM movies WHERE title = ?", title, function(err,row){
-  	if(err) {throw err;};
-
-  	if (row===undefined){
-  		db.run("INSERT INTO movies(title) VALUES (?)", title, function(err){
-  			if(err){throw err;};
-  			
-  		})
-  	}
-  });
-});
-```
+**Hint**: Your request type may be a POST instead of GET if you are editing your database.
 
 #### Storing Favorites / Viewing Your Favorites List
 Alright lets get into the nitty gritty of how to let users save their favorite movies, and then see a list of that **PERSISTED** data.
 
-Here we are allowing the user to add movies to their "favorite" list. The first two "SELECT" iterations are getting us the user and movie id. The "DELETE" section is used to ensure movies cannot be duplicated on a users list. The "INSERT" is to create the relationship of between the user and movie in the "favorites" table. 
+Provided below is a sample of how to allow users to add a movie to their "favorite" list. The first two "SELECT" iterations are getting us the user and movie id. The "DELETE" section is used to ensure movies cannot be duplicated on a users list. The "INSERT" is to create the relationship of between the user and movie in the "favorites" table. 
 
 Encapsulating these events within each other prevents issues caused by JS async properties. For example, if you did not encapsulate the db events, the DELETE or INSERT events may run before the user_id/movie_id is returned.
 
@@ -289,65 +259,14 @@ app.post('/movies/favAdd/:title', function(req,res){
 });
 ```
 
-Now lets get the users list of favorite movies. Here we are still encapsulating the database events. Remember that "req.session.username" I told you to pay attention to earlier? Well now you get to use it!
+Now write a request that will allow the users to pull the movie list data from your database. 
 
-We also created two empty arrays to store the data we will be using throughout this event. The process for grabbing the proper data looks a little like this: **user_id --> movie_id --> movie_title**
+**Hint**: Might be a GET request instead of a POST
 
-The last if statement is to ensure the res.send does not initiate until the for loops are completed
+**Hint 2**: The encapsulation in the above sample may be the same format you choose to use when pulling data from your tables.
 
-```
-app.get('/favList/', function(req, res){
-	var username = req.session.username;
-	var user_id = '';
-	var movieArr = [];
-	var movieTitles = [];
+**Hint 3**: The flow may look like - User_id --> Movie_id --> Movie_title
 
-	db.get("SELECT * FROM users WHERE username = ?", username, function(err, row){
-		if(err) {throw err;};
-
-		if(row != undefined){
-			user_id = row.id;
-		}
-		db.all("SELECT * FROM favorites WHERE user_id = ?", user_id, function(err, rows){
-			if(err) {throw err;};
-
-			for (i=0; i<rows.length; i++){
-				movieArr.push(rows[i].movie_id);
-			}
-
-			for (j=0; j<movieArr.length; j++){
-				db.get("SELECT * FROM movies WHERE id = ?", movieArr[j], function(err, row){
-					if(err) {throw err;};
-					movieTitles.push(row.title);
-
-					if(movieTitles.length === movieArr.length){
-						res.send(movieTitles);
-					}
-				})
-			};
-		})
-	})
-});
-
-```
-
-#### Logging out and Port Listening
-you can use the session.destroy to destroy the current session. However to get back to the login page this event send a json object to the main.js file. If the object matches a parameter that function will use the window.location command to render the login.ejs.
-
-```
-app.delete('/logout', function(req,res){
-	req.session.destroy();
-
-	console.log(req.session);
-	res.json("logout");
-})
-```
-Listen for port 3000 on your laptop, but for port 80 before pushing to DO.
-
-```
-app.listen(3000);
-console.log("we are connected to port 3000");
-```
 
 ## <a name=mainjs>Main.js</a>
 I will only be covering the material required to make the calls to the server and parse the data. Feel free to manipulate the DOM however you please. Some things you can consider are:
@@ -399,92 +318,10 @@ function searchTitle(movie){
     xhr.send();
 };
 ```
-Here is the "POST" function. This is the function to create the movie details when a single title is selected. You can console.log "parsed" to see how the data coming back is formatted. All of the createElements / setAttributes / appendChild are all for DOM Manipulation. In this example we are clearing out the HTML from the "page" div (clearData()) and repopulating it with the selected content.
 
-```
-function singleMovie(movie){
-    
-    var url = "movies/single/" + movie;
-    var xhr = new XMLHttpRequest();
+Now how will you pass the movie details of a single movie onto the page. What would the "singleMovie(movie)" function in the above sample look like?
 
-    xhr.open("POST", url);
-
-    xhr.addEventListener('load', function(e) {
-
-        var d = xhr.responseText;
-        var parsed = JSON.parse(d);
-        console.log(parsed);
-
-        clearData();
-
-        var cast = document.createElement('ul');
-        var directors = document.createElement('ul');
-        var writers = document.createElement('ul');
-        var genre = document.createElement('ul');
-
-        var castHead = document.createElement('h3');
-        var dirHead = document.createElement('h3');
-        var writHead = document.createElement('h3');
-        var genreHead = document.createElement('h3');
-
-        castHead.innerHTML = "Cast";
-        dirHead.innerHTML = "Directors";
-        writHead.innerHTML = "Writers";
-        genreHead.innerHTML = "Genre";
-
-        cast.appendChild(castHead);
-        directors.appendChild(dirHead);
-        writers.appendChild(writHead);
-        genre.appendChild(genreHead);
-
-        var title = document.createElement('h3');
-        title.innerText = parsed.Title;
-        
-        var castName = parsed.Actors.split(',');
-        var directorName = parsed.Director.split(',');
-        var writerName = parsed.Writer.split(',');
-        var genreType = parsed.Genre.split(',');
-
-        for (i=0; i<castName.length; i++){
-            var li = document.createElement("li");
-            li.innerText = castName[i];
-            cast.appendChild(li);
-        };
-
-        for (i=0; i<directorName.length; i++){
-            var li = document.createElement("li");
-            li.innerText = directorName[i];
-            directors.appendChild(li);
-        };
-
-        for (i=0; i<writerName.length; i++){
-            var li = document.createElement("li");
-            li.innerText = writerName[i];
-            writers.appendChild(li);
-        };
-
-        for (i=0; i<genreType.length; i++){
-            var li = document.createElement("li");
-            li.innerText = genreType[i];
-            genre.appendChild(li);
-        };
-
-        button.setAttribute('id', 'favSave');
-        button.innerText = "Save to Favorites!";
-
-        currentMovie = parsed.Title;
-
-        page.appendChild(title);
-        page.appendChild(cast);
-        page.appendChild(directors);
-        page.appendChild(writers);
-        page.appendChild(genre);
-        page.appendChild(button);
-    });
-    xhr.send();
-};
-
-```
+**Hint**: It can get kind of long using all vanilla javascript DOM manipulate, so keep your naming conventions organized!
 
 ## <a name=do>Digital Ocean Hosting</a>
 Shameless plug! Visit my other tutorial on how to host a node app on Digital Ocean. 
@@ -498,8 +335,8 @@ Bonus Shameless plug! Learn to configure your ssh for an easier time logging int
 
 ## <a name=notes> Personal Notes on Project Process</a>
 
-* **README.md**: I was slightly confused as to directions of how the README was to be presented. So I decided to try and me it a tutorial geared towards web development students.
-* **Data.json**: Did not utilize this file. I was filled with the grandiose notion that this web app would be cooler if users were able to create logins and authenticate. I hope I was right. 
+* **README.md**: The directions were vague on how to format the README file so I decided a tutorial for web development students would work best.
+* **Data.json**: Did not utilize this file. I was filled with the grandiose notion that a web app with login and authentication would be more impressive. I hope I was right. 
 * **fs**: It was my intention to use the "fs" npm package to read an apikey file. I began writing code to use the Rotten Tomatoes api for the initial search(because it is way faster than OMDB), and then use the OMDB api for movie details. However I could not get an RT apikey in time, so I discarded the idea.
 * **OMDB API**: Great api, but their documentation only gives us the link for single movie searches. To find multiple movies with the same search title the api link is:
 
