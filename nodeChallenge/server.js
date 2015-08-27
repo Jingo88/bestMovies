@@ -228,6 +228,6 @@ app.delete('/logout', function(req,res){
 })
 
 //tells you if you are connected, shows up in terminal. Make sure to turn this to port 80 when pushing to Digital Ocean
-app.listen(3000);
-console.log("we are connected to port 3000");
+app.listen(4000);
+console.log("we are connected to port 4000");
 
