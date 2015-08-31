@@ -23,7 +23,10 @@ app.use(session({
 
 //renders the login.ejs file
 app.get('/', function(req,res){
-	console.log(req.session);
+	res.redirect('/login');
+});
+
+app.get('/login', function(req,res){
 	res.render('login.ejs', {});
 });
 

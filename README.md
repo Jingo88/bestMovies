@@ -4,7 +4,7 @@ Take a look at the site live [here](jasonng.nyc:5002)
 
 **Movie Lister** Is a movie search engine web application. Users have the ability to create a login username and password. Once they are logged in they can search for movies by title, and save the movies they enjoyed to a "favorites" list. 
 
-The application utilizing data from the OMDB api. Users can create login information and authentication is done through Bcrypt. Once logged in users make HTTP requests to the server, and can save their favorite movies. Their login information and movies saved are persisted in a SQL database. 
+The application utilizes data from the OMDB api. Authentication for user login is done through bcrypt. Once logged in users make HTTP requests to the server, and can save their favorite movies. Their login information and movies saved are persisted in a SQL database. 
 
 Want to give it a shot? Let's clone the repo
 
