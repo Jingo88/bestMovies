@@ -23,10 +23,6 @@ app.use(session({
 
 //renders the login.ejs file
 app.get('/', function(req,res){
-	res.redirect('/login');
-});
-
-app.get('/login', function(req,res){
 	res.render('login.ejs', {});
 });
 
@@ -35,15 +31,18 @@ app.get('/login', function(req,res){
 app.post('/user', function(req,res){
 	var username = req.body.newName;
 	var password = req.body.newPassword;
-	console.log(username);
-	console.log(password);
+	var confirm = req.body.confirmPass;
 
-	if (req.body.newPassword === req.body.confirmPass){
+	// console.log(req.body)
+	// console.log(req.POST) === undefined
+	// console.log(req.method) === "POST"
+	
+	if (password === confirm){
 		var hash = bcrypt.hashSync(password, 8);
+
 // Now the password is the hash you have created using bcrypt
 		db.run('INSERT INTO users(username, password) VALUES (?, ?)', username, hash, function(err){
 			if(err) { throw err;}
-
 		});
 //Redirects to login page again so the user can sign in
 		res.redirect('/');
@@ -52,15 +51,12 @@ app.post('/user', function(req,res){
 	}
 });
 
+
 //This post is hit when the user logs in through the login.ejs
 //verifying the user with the password
 app.post('/session', function(req,res){
 	var username = req.body.username;
 	var password = req.body.password;
-//Always good to console log your information
-	console.log("your username is " + username);
-	console.log("your password is " + password);
-	console.log("you are now in session post");
 
 //search through the users table. compare the submitted password with the password in the db
 	db.get('SELECT * FROM users WHERE username = ?', username, function(err, row){
@@ -68,15 +64,14 @@ app.post('/session', function(req,res){
 		
 		if(row) {
 			var passwordMatches = bcrypt.compareSync(password, row.password);
-			console.log(passwordMatches)
+			
 			if (passwordMatches) { 
-//Pay attention to these two "req.session". 
-//We are creating more values in our session token to use for later!!!
+				//Pay attention to these two "req.session". 
+				//We are creating more values in our session token to use for later!!!
 				req.session.valid_user = true;
 				req.session.username = username;
 				res.redirect('/movies');	
 			}
-
 		} else {
 			res.redirect('/');	
 		}
@@ -105,7 +100,6 @@ app.get('/movies/:title', function(req, res){
     if (!error && response.statusCode == 200){
       res.send(body);
 //see what the JSON file looks like for multiple or single movies
-      console.log(body);
     }
   })
 });
@@ -232,5 +226,5 @@ app.delete('/logout', function(req,res){
 
 //tells you if you are connected, shows up in terminal. Make sure to turn this to port 80 when pushing to Digital Ocean
 app.listen(5002);
-console.log("we are connected to port 4000");
+console.log("we are connected to port 4000, Move to 5002 when pushing to DO");
 

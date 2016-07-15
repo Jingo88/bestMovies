@@ -9,12 +9,12 @@
   },
   "author": "Jason Ng (https://github.com/Jingo88)",
   "dependencies": {
-    "express": "^4.12.2",
+    "bcrypt": "^0.8.7",
     "body-parser": "^1.12.0",
     "ejs": "^2.3.1",
-    "sqlite3": "^3.0.4",
-    "bcrypt": "^0.8.2",
+    "express": "^4.12.2",
     "express-session": "^1.11.1",
-    "request": "2.55.0"
+    "request": "2.55.0",
+    "sqlite3": "^3.1.4"
   }
 }

@@ -1,0 +1,42 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Movie Lister</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css">
+	<link href="style.css" rel='stylesheet'>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+	<script type='text/javascript' src='main.js'></script>
+
+
+</head>
+<body>
+
+	<nav>
+		<div class="nav-wrapper">
+			<a href="#" class="brand-logo"></a>
+			<div class="row">
+				<div class="input-field col s12 m4 push-m4">
+					<input class='validate' id='findTitle' type='text' placeholder='Search By Movie Title'></input>	
+				</div>
+				<div>
+					<ul id='nav-mobile' class='right hide-on-med-and-down'>
+					<li id='home'><a href="/movies">Home</a></li>
+					<li id='favLink'><a href="#">Favorites</a></li>	
+					<li id="logout"><a href="">Logout</a></li>
+				</div>
+			</ul>
+			</div>
+		</div>
+	</nav>
+
+	<section id='page'>
+		<h1 id='landing'>Best Movies</h1>
+
+		<h3 id='sublanding'> A site where you can search movies and save them to a favorites list.</h3>
+	</section>
+
+</body>
+</html>

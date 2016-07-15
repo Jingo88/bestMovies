@@ -1,0 +1,17 @@
+body{
+	font-family: 'Open Sans', sans-serif;
+	text-align: center;
+}
+
+#landing{
+	text-align: center;
+	font-size: 4.5em;
+	font-weight: 700;
+	margin-top: 10%;
+	position: relative;
+	text-decoration: underline;
+}
+
+.options{
+	text-align: center;
+}
