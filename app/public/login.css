@@ -1,6 +1,7 @@
 body{
-	font-family: 'Open Sans', sans-serif;
 	text-align: center;
+	background-color: #546A7B;
+  color: #FDFDFF;
 }
 
 #landing{
@@ -14,4 +15,37 @@ body{
 
 .options{
 	text-align: center;
+}
+
+.btn{
+	color: #546A7B;
+	background-color: #FDFDFF;
+}
+
+.backModal {
+  top: 0;
+  left: 0;
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .6);
+}
+
+.modal-body {
+  position: absolute;  
+  height: 100%;
+  border-top: 2px solid black;
+  margin-left: auto;
+  margin-right: auto;
+  left:0;
+  right:0;
+}
+
+input{
+	text-align: center;
+}
+
+.waves-effect{
+	z-index: 0;
 }

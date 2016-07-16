@@ -216,15 +216,11 @@ app.get('/favList/', function(req, res){
 });
 
 app.delete('/logout', function(req,res){
-	console.log("ARE WE IN LOGOUT?");
-	console.log(req.session);
 	req.session.destroy();
-
-	console.log(req.session);
 	res.json("logout");
 })
 
 //tells you if you are connected, shows up in terminal. Make sure to turn this to port 80 when pushing to Digital Ocean
-app.listen(5002);
+app.listen(4000);
 console.log("we are connected to port 4000, Move to 5002 when pushing to DO");
 

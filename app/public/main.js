@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function(event){
     var findTitle = document.querySelector('#findTitle');
     var multiMovie = document.querySelector('#movieList');
     var page = document.querySelector('#page');
-    // var home = document.querySelector('#home');
+    var home = document.querySelector('#home');
     var button = document.createElement('button');
     var userFav = document.querySelector('#favLink');
     var logout = document.querySelector('#logout');
@@ -33,24 +33,24 @@ document.addEventListener('DOMContentLoaded', function(event){
         }
     });
 
-    // //Will bring the user back to the splash text
-    // home.addEventListener('click', function(){
-    // //clear the page div
-    //     clearData();
+    //Will bring the user back to the splash text
+    home.addEventListener('click', function(){
+    //clear the page div
+        clearData();
 
-    // //repopulate the page div
-    //     var landing = document.createElement('h1');
-    //         landing.setAttribute('id', 'landing');
-    //         landing.innerHTML = "Best Movies";
+    //repopulate the page div
+        var landing = document.createElement('h1');
+            landing.setAttribute('id', 'landing');
+            landing.innerHTML = "Best Movies";
 
-    //     var sublanding = document.createElement('h3');
-    //         sublanding.setAttribute('id', 'sublanding');
-    //         sublanding.innerHTML = "A site where you can search movies and save them to a favorites list.";
+        var sublanding = document.createElement('h3');
+            sublanding.setAttribute('id', 'sublanding');
+            sublanding.innerHTML = "A site where you can search movies and save them to a favorites list.";
 
-    //     page.appendChild(landing);
-    //     page.appendChild(sublanding);
+        page.appendChild(landing);
+        page.appendChild(sublanding);
 
-    // });
+    });
 
     logout.addEventListener('click', function(){
 
@@ -60,8 +60,7 @@ document.addEventListener('DOMContentLoaded', function(event){
 
         xhr.addEventListener('load', function(){
             var success = JSON.parse(xhr.responseText);
-
-            console.log(success);
+            
             if (success === "logout"){
                 window.location = "/";
             }
@@ -290,5 +289,4 @@ document.addEventListener('DOMContentLoaded', function(event){
         });
         xhr.send();
     });
-
 });

@@ -9,7 +9,7 @@ button{
 }
 
 /*Styles the div that all DOM manipulation will go through*/
-#page{
+/*#page{
 	padding: 2%;
 	position: absolute;
 	top: 15%;
@@ -18,8 +18,8 @@ button{
 	left: 29%;
 	border:2px solid black;
 	border-radius: 15px;
-}
-#landing{
+}*/
+/*#landing{
 	text-align: center;
 	font-size: 72px;
 	font-weight: 600;
@@ -34,7 +34,7 @@ button{
 	text-align: center;
 	font-size: 35px;
 	width: 50%;
-}
+}*/
 
 /*Nav Bar Styling*/
 .nav-wrapper{
