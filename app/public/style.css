@@ -8,6 +8,10 @@ button{
 	cursor: pointer;
 }
 
+.home{
+	text-align: center;
+}
+
 /*Styles the div that all DOM manipulation will go through*/
 /*#page{
 	padding: 2%;

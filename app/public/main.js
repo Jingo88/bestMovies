@@ -1,4 +1,44 @@
 document.addEventListener('DOMContentLoaded', function(event){
+//////////////////////
+//////////////////////          Quote Slider 
+//////////////////////
+    var ppl = Object.keys(quotes);
+    var num = ppl.length
+
+    var slider = document.getElementsByClassName('quoteSlider')[0];
+    var count = 0;
+
+    var person =ppl[Math.floor(Math.random()*num)];
+    var current_quote = document.createElement('h4');
+    current_quote.innerHTML = '"' + quotes[person] + '"';
+    slider.appendChild(current_quote);
+    var current_person = document.createElement('h5');
+    current_person.innerHTML = "- " + person;
+    slider.appendChild(current_person);
+
+
+    var quoteDelay = function(){
+        setTimeout(function(){
+            count++;
+            if(count<100){
+                slider.innerHTML = "";
+                var person =ppl[Math.floor(Math.random()*num)];
+                var current_quote = document.createElement('h4');
+                current_quote.innerHTML = '"' + quotes[person] + '"';
+                slider.appendChild(current_quote);
+                var current_person = document.createElement('h5');
+                current_person.innerHTML = "- " + person;
+                slider.appendChild(current_person);
+                quoteDelay()
+            }
+        },3000)
+    }
+
+    quoteDelay();
+
+//////////////////////
+//////////////////////          Rest of page 
+//////////////////////
 
     var findTitle = document.querySelector('#findTitle');
     var multiMovie = document.querySelector('#movieList');
