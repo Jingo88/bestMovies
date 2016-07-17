@@ -5,37 +5,40 @@ document.addEventListener('DOMContentLoaded', function(event){
     var ppl = Object.keys(quotes);
     var num = ppl.length
 
-    var slider = document.getElementsByClassName('quoteSlider')[0];
-    var count = 0;
+    var sliderWrap = function(){
 
-    var person =ppl[Math.floor(Math.random()*num)];
-    var current_quote = document.createElement('h4');
-    current_quote.innerHTML = '"' + quotes[person] + '"';
-    slider.appendChild(current_quote);
-    var current_person = document.createElement('h5');
-    current_person.innerHTML = "- " + person;
-    slider.appendChild(current_person);
+        var slider = document.getElementsByClassName('quoteSlider')[0];
+        var count = 0;
+
+        var person =ppl[Math.floor(Math.random()*num)];
+        var current_quote = document.createElement('h4');
+        current_quote.innerHTML = '"' + quotes[person] + '"';
+        slider.appendChild(current_quote);
+        var current_person = document.createElement('h5');
+        current_person.innerHTML = "- " + person;
+        slider.appendChild(current_person);
 
 
-    var quoteDelay = function(){
-        setTimeout(function(){
-            count++;
-            if(count<100){
-                slider.innerHTML = "";
-                var person =ppl[Math.floor(Math.random()*num)];
-                var current_quote = document.createElement('h4');
-                current_quote.innerHTML = '"' + quotes[person] + '"';
-                slider.appendChild(current_quote);
-                var current_person = document.createElement('h5');
-                current_person.innerHTML = "- " + person;
-                slider.appendChild(current_person);
-                quoteDelay()
-            }
-        },3000)
+        var quoteDelay = function(){
+            setTimeout(function(){
+                count++;
+                if(count<100){
+                    slider.innerHTML = "";
+                    var person =ppl[Math.floor(Math.random()*num)];
+                    var current_quote = document.createElement('h4');
+                    current_quote.innerHTML = '"' + quotes[person] + '"';
+                    slider.appendChild(current_quote);
+                    var current_person = document.createElement('h5');
+                    current_person.innerHTML = "- " + person;
+                    slider.appendChild(current_person);
+                    quoteDelay()
+                }
+            },2500)
+        }
+        quoteDelay();
     }
 
-    quoteDelay();
-
+    sliderWrap();
 //////////////////////
 //////////////////////          Rest of page 
 //////////////////////
@@ -78,18 +81,38 @@ document.addEventListener('DOMContentLoaded', function(event){
     //clear the page div
         clearData();
 
-    //repopulate the page div
-        var landing = document.createElement('h1');
-            landing.setAttribute('id', 'landing');
-            landing.innerHTML = "Best Movies";
+    //Put up the main page header and quote slider
+        var wrap1 = document.createElement('div');
+        wrap1.className += 'col';
+        wrap1.className += ' s12';
+        wrap1.className += ' home';
+        var h1 = document.createElement('h1');
+        h1.className += 'col';
+        h1.className += ' s12';
+        h1.className += ' m6';
+        h1.className += ' push-m3';
+        h1.setAttribute('id', 'landing');
+        h1.innerHTML = "Movie Lister"
+        wrap1.appendChild(h1)
+        page.appendChild(wrap1)
 
-        var sublanding = document.createElement('h3');
-            sublanding.setAttribute('id', 'sublanding');
-            sublanding.innerHTML = "A site where you can search movies and save them to a favorites list.";
+        var wrap2 = document.createElement('div');
+        wrap2.className += 'col';
+        wrap2.className += ' s12';
+        wrap2.className += ' home';
+        var newSlider = document.createElement('div');
+        newSlider.className += 'quoteSlider'
+        var h3 = document.createElement('h1');
+        h3.className += 'col';
+        h3.className += ' s12';
+        h3.className += ' m6';
+        h3.className += ' push-m3';
+        h3.setAttribute('id', 'sublanding');
+        wrap2.appendChild(newSlider);
+        wrap2.appendChild(h3);
+        page.appendChild(wrap2);
 
-        page.appendChild(landing);
-        page.appendChild(sublanding);
-
+        sliderWrap()
     });
 
     logout.addEventListener('click', function(){
