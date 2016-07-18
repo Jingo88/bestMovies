@@ -203,11 +203,10 @@ document.addEventListener('DOMContentLoaded', function(event){
         xhr.send();
     };
 
-    //This function is going to be called upon whenever we are looking for movie details
-    //If a movie is searched and only one exists
-    //If a movie is clicked in the searched list
-    //If a movie is clicked in the favorites list
-    //This looks like a super long difficult function but half of it is strictly repitition
+//////////////////////
+//////////////////////          Single Movie Search
+//////////////////////
+
     var singleMovie = function(movie){
         
         var url = "movies/single/" + movie;
@@ -219,8 +218,6 @@ document.addEventListener('DOMContentLoaded', function(event){
 
             var d = xhr.responseText;
             var parsed = JSON.parse(d);
-    //console.log to see how the JSON data is formatted        
-            console.log(parsed);
 
     //clear the page div
             clearData();
@@ -336,7 +333,6 @@ document.addEventListener('DOMContentLoaded', function(event){
         xhr.addEventListener('load', function(){
             var d = xhr.responseText;
             var parsed = JSON.parse(d);
-            console.log(parsed);
             alert('This movie has been added to your favorites list.')
         });
         xhr.send();
@@ -345,27 +341,35 @@ document.addEventListener('DOMContentLoaded', function(event){
     //This event listener will show the favorites list
     //you can add the class loop from earlier and then call the single movie function when needed
     userFav.addEventListener('click', function(){
-        console.log("blahblah")
         var url = '/favList/';
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);
 
         xhr.addEventListener('load', function(){
             var favList = JSON.parse(xhr.responseText);
+            var favLen = favList.length;
 
             clearData();
 
-            if (favList.length >= 1){
+            if (favList !== []){
+                var wrap = document.createElement('div');
+                wrap.className += "col "
+                wrap.className += "s12 "
+                wrap.className += "m6 "
+                var ol = document.createElement('ol');
+
                 var h3 = document.createElement('h3');
                 h3.innerHTML = "Your Favorite Movies";
-                page.appendChild(h3);
+                wrap.appendChild(h3);
 
                 for(i=0; i<favList.length; i++){
                     var li=document.createElement('li');
                     li.innerHTML = favList[i];
                     li.setAttribute('class', 'favListItem');
-                    page.appendChild(li);
+                    ol.appendChild(li);
                 }
+                wrap.appendChild(ol);
+                page.appendChild(wrap);
     //Same process as the beginning search function
     //Allows the user to click a specific title in the list
     //And run the singleMovie function on the selected title
