@@ -33,13 +33,8 @@ body{
 }
 
 .modal-body {
-  position: absolute;  
-  height: 100%;
-  border-top: 2px solid black;
-  margin-left: auto;
-  margin-right: auto;
-  left:0;
-  right:0;
+  border: 2px solid white;
+  background-color: #62929E;
 }
 
 input{

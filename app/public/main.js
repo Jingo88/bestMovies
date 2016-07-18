@@ -1,5 +1,16 @@
 document.addEventListener('DOMContentLoaded', function(event){
 //////////////////////
+//////////////////////          Grab Dom Elements 
+//////////////////////
+    var findTitle = document.querySelector('#findTitle');
+    var multiMovie = document.querySelector('#movieList');
+    var page = document.querySelector('#page');
+    var home = document.querySelector('#home');
+    var button = document.createElement('button');
+    var userFav = document.querySelector('#favLink');
+    var logout = document.querySelector('#logout');
+
+//////////////////////
 //////////////////////          Quote Slider 
 //////////////////////
     var ppl = Object.keys(quotes);
@@ -39,42 +50,10 @@ document.addEventListener('DOMContentLoaded', function(event){
     }
 
     sliderWrap();
-//////////////////////
-//////////////////////          Rest of page 
-//////////////////////
 
-    var findTitle = document.querySelector('#findTitle');
-    var multiMovie = document.querySelector('#movieList');
-    var page = document.querySelector('#page');
-    var home = document.querySelector('#home');
-    var button = document.createElement('button');
-    var userFav = document.querySelector('#favLink');
-    var logout = document.querySelector('#logout');
-
-    //use this to store the title of the current SINGLE movie the user is viewing
-    var currentMovie = '';
-
-    //This is a single page app, we will be using a "clearData" function to clean out the html in the "page" div and populate it with the information requested
-    var clearData = function(){
-        page.innerHTML = '';
-        findTitle.value = '';
-        currentMovie = '';
-    }
-
-    //search using enter key
-    findTitle.addEventListener('keyup', function(e){
-        if (e.keyCode === 13){
-            var movie = findTitle.value;
-
-    //If there is something in the input field run the search function
-    //If the input field is empty alert the user
-            if (movie != ''){
-                searchTitle(movie);
-            } else {
-                alert('Please enter a movie title');
-            };   
-        }
-    });
+//////////////////////          Home Button Builds Original Page 
+//////////////////////          Calls slider wrap function for quotes
+//////////////////////          Does not refresh page
 
     //Will bring the user back to the splash text
     home.addEventListener('click', function(){
@@ -115,6 +94,12 @@ document.addEventListener('DOMContentLoaded', function(event){
         sliderWrap()
     });
 
+
+//////////////////////          Click Logout Button
+//////////////////////          XHR request to delete route
+//////////////////////          back to home route
+
+
     logout.addEventListener('click', function(){
 
         var url = '/logout';
@@ -131,6 +116,38 @@ document.addEventListener('DOMContentLoaded', function(event){
         xhr.send();
     });
 
+
+//////////////////////
+//////////////////////          Rest of page 
+//////////////////////
+
+    //use this to store the title of the current SINGLE movie the user is viewing
+    var currentMovie = '';
+
+    //This is a single page app, we will be using a "clearData" function to clean out the html in the "page" div and populate it with the information requested
+    var clearData = function(){
+        page.innerHTML = '';
+        findTitle.value = '';
+        currentMovie = '';
+    }
+
+    //search using enter key
+    findTitle.addEventListener('keyup', function(e){
+        if (e.keyCode === 13){
+            var movie = findTitle.value;
+
+    //If there is something in the input field run the search function
+    //If the input field is empty alert the user
+            if (movie != ''){
+                searchTitle(movie);
+            } else {
+                alert('Please enter a movie title');
+            };   
+        }
+    });
+
+
+
     //This is the initial search function
     var searchTitle = function(movie){
         var url = '/movies/' + movie
@@ -140,28 +157,44 @@ document.addEventListener('DOMContentLoaded', function(event){
         xhr.addEventListener('load', function(){
             var movieObj = JSON.parse(xhr.responseText);
             var movies = movieObj.Search;
+            var moviesLen = movies.length;
             console.log(movieObj);
     //clear all the html from the "page" div
             clearData();
+            // debugger;
     //if there is more than one movie create a list only showing the titles
-            if (movies.length >= 2){
-                for (i=0; i<movies.length; i++){
-                    var li=document.createElement('li');
-                    li.innerHTML = movies[i].Title;
-                    li.setAttribute('class', 'multiMovie');
-                    page.appendChild(li);
+            if (moviesLen >= 2){
+
+                var ol = document.createElement('ol');
+                ol.className += 'col '
+                ol.className += 's12 '
+                ol.className += 'm6'
+
+                for (var i=0; i<moviesLen; ++i){
+                    var wrap = document.createElement('li');
+                    var ul = document.createElement('ul');
+                    var title = document.createElement('li');
+                    title.setAttribute('class', 'multiMovie');
+                    title.innerHTML = movies[i].Title;
+                    ul.appendChild(title);
+                    var year = document.createElement('li');
+                    year.innerHTML = movies[i].Year;
+                    ul.appendChild(year);
+                    wrap.appendChild(ul);
+                    ol.appendChild(wrap);
                 };
     //Vanilla JS way of making those titles clickable and returning only the contents of the clicked element
+                page.appendChild(ol);
+
                 var multiMovie = document.getElementsByClassName('multiMovie');
-                
                 var getMovie = function() {
                     singleMovie(this.innerHTML);
-                    console.log(this.innerHTML);
                 };
     //If a title is clicked from the movie list run the getMovie function which will pass the elements text into the singleMovie function
                 for(var i=0;i<multiMovie.length;i++){
                     multiMovie[i].addEventListener('click', getMovie, false);
                 }
+                
     //If there is only one movie run the singleMovie function
             } else {
                 singleMovie(movie);
@@ -199,11 +232,11 @@ document.addEventListener('DOMContentLoaded', function(event){
             var genre = document.createElement('ul');
             var other = document.createElement('ul');
 
-            var castHead = document.createElement('h3');
-            var dirHead = document.createElement('h3');
-            var writHead = document.createElement('h3');
-            var genreHead = document.createElement('h3');
-            var otherHead = document.createElement('h3');
+            var castHead = document.createElement('h5');
+            var dirHead = document.createElement('h5');
+            var writHead = document.createElement('h5');
+            var genreHead = document.createElement('h5');
+            var otherHead = document.createElement('h5');
 
             castHead.innerHTML = "Cast";
             dirHead.innerHTML = "Directors";
@@ -280,14 +313,21 @@ document.addEventListener('DOMContentLoaded', function(event){
             other.appendChild(plot);
 
     //Append all of these items to the page div in the order you want them to show
-            page.appendChild(poster);
-            page.appendChild(title);
-            page.appendChild(cast);
-            page.appendChild(directors);
-            page.appendChild(writers);
-            page.appendChild(genre);
-            page.appendChild(other);
-            page.appendChild(button);
+            var ol = document.createElement('ol');
+            ol.className += 'col '
+            ol.className += 's12 '
+            ol.className += 'm6'
+            
+            ol.appendChild(poster);
+            ol.appendChild(title);
+            ol.appendChild(cast);
+            ol.appendChild(directors);
+            ol.appendChild(writers);
+            ol.appendChild(genre);
+            ol.appendChild(other);
+            ol.appendChild(button);
+
+            page.appendChild(ol)
         });
         xhr.send();
     };
@@ -313,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function(event){
     //This event listener will show the favorites list
     //you can add the class loop from earlier and then call the single movie function when needed
     userFav.addEventListener('click', function(){
-
+        console.log("blahblah")
         var url = '/favList/';
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url);

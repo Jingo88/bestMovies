@@ -51,19 +51,22 @@
 	</div>
 
 	<div id='registerForm' class='backModal'>
-		<div class='modal-body'>
-			<div class='options'>
-				<h5> If you're not on the guest list, have no fear! Submit some infomation here!</h5>			
-				<div class="input-field">
-					<form action="user" method="POST">
-						<input name="newName" placeholder="Your Username" class='validate' required=''>
-						<input name="newPassword" type="password" placeholder="Your Password" class='validate' required=''>
-						<input name="confirmPass" type="password" placeholder="Confirm Password" class='validate' required=''>
-						<input type="submit" class='waves-effect waves-light btn'>
-						<button class='waves-effect waves-light btn closeNow'>Close</button>
-					</form> 			
-				</div>
-			</div>
+		<div class="row">
+			<div class='modal-body col s12 m6 push-m3'>
+				<div class='options'>
+					<h5> If you're not on the guest list, have no fear! Submit some infomation here!</h5>			
+					<div class="input-field">
+						<form action="user" method="POST">
+							<input name="newName" placeholder="Your Username" class='validate' required=''>
+							<input name="newPassword" type="password" placeholder="Your Password" class='validate' required=''>
+							<input name="confirmPass" type="password" placeholder="Confirm Password" class='validate' required=''>
+							<input type="submit" class='waves-effect waves-light btn'>
+							<button class='waves-effect waves-light btn closeNow'>Close</button>
+						</form> 			
+					</div>
+				</div>	
+		</div>
+		
 	</div>		
 
 	
