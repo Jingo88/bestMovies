@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function(event){
 
             if (parsed.Poster != "N/A"){
                 poster.innerHTML = "<img src='" + parsed.Poster + "'>";
-    //Really cool trick to center an img tag
+    //Cool trick to center an img tag
                 poster.setAttribute('align', 'middle');    
             } else {
                 poster.innerHTML = "Sorry there is no poster for this film!";
@@ -269,32 +269,24 @@ document.addEventListener('DOMContentLoaded', function(event){
             var writerName = parsed.Writer.split(',');
             var genreType = parsed.Genre.split(',');
 
-            for (i=0; i<castName.length; i++){
-                var li = document.createElement("li");
-                li.innerHTML = castName[i];
-                cast.appendChild(li);
-            };
+            var loopin = function(parent, children){
+                for (var i = 0; i<children.length; ++i){
+                    var li = document.createElement('li');
+                    li.innerHTML = children[i];
+                    parent.appendChild(li);
+                }
+            }
 
-            for (i=0; i<directorName.length; i++){
-                var li = document.createElement("li");
-                li.innerHTML = directorName[i];
-                directors.appendChild(li);
-            };
-
-            for (i=0; i<writerName.length; i++){
-                var li = document.createElement("li");
-                li.innerHTML = writerName[i];
-                writers.appendChild(li);
-            };
-
-            for (i=0; i<genreType.length; i++){
-                var li = document.createElement("li");
-                li.innerHTML = genreType[i];
-                genre.appendChild(li);
-            };
+            loopin(cast, castName);
+            loopin(directors, directorName);
+            loopin(writers, writerName);
+            loopin(genre, genreType);
 
             button.setAttribute('id', 'favSave');
             button.innerHTML = "Save to Favorites!";
+            button.className += "waves-effect "
+            button.className += "waves-light "
+            button.className += "btn"
 
             currentMovie = parsed.Title;
 
@@ -345,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function(event){
             var d = xhr.responseText;
             var parsed = JSON.parse(d);
             console.log(parsed);
-            alert('This movie has been added to your list. Please click the "Your Favorites" button on the top right to view your current list.')
+            alert('This movie has been added to your favorites list.')
         });
         xhr.send();
     });
