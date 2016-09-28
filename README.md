@@ -1,9 +1,6 @@
-# blah blah blah blah
-
-
 #Movie Lister
 
-Take a look at the site live [here](jasonng.nyc:5002)
+Visit the live project [here!](jasonng.nyc:5002)
 
 **Movie Lister** Is a movie search engine web application. Users have the ability to create a login username and password. Once they are logged in they can search for movies by title, and save the movies they enjoyed to a "favorites" list. 
 

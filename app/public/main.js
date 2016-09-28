@@ -218,10 +218,11 @@ document.addEventListener('DOMContentLoaded', function(event){
 
             var d = xhr.responseText;
             var parsed = JSON.parse(d);
+            console.log(parsed)
 
     //clear the page div
             clearData();
-
+ 
     //create the categories and their headers
             var cast = document.createElement('ul');
             var directors = document.createElement('ul');
